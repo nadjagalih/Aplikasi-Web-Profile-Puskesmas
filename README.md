@@ -107,16 +107,4 @@ Akses Aplikasi di Web browser
 Demo Login :
 1. Admin
     - email     : admin@gmail.com
-    - password  : 1234
-
-
-Demo Video : https://youtu.be/wY13QzFiipY?si=PE2Bx0N6XvA3q8de
-
-![Screenshot_1139](https://github.com/dwipurnomo12/portal-desa/assets/105181667/269695e3-e79c-45ee-94a7-d3bd260e64a9)
-![Screenshot_1138](https://github.com/dwipurnomo12/portal-desa/assets/105181667/17e3e13e-dbf9-463c-8d7a-d0ad42c5eb69)
-![Screenshot_1137](https://github.com/dwipurnomo12/portal-desa/assets/105181667/ae1020f7-232f-4585-9c0d-9e7408c30271)
-![Screenshot_1136](https://github.com/dwipurnomo12/portal-desa/assets/105181667/22bef1c0-1b78-41f8-a0ec-0fc88a2140e9)
-![Screenshot_1135](https://github.com/dwipurnomo12/portal-desa/assets/105181667/eeeee1f4-6718-4973-ac1d-44478dedafd7)
-![Screenshot_1134](https://github.com/dwipurnomo12/portal-desa/assets/105181667/e7bfc102-c141-4bcb-88cd-f54faa9a0dfc)
-![Screenshot_1133](https://github.com/dwipurnomo12/portal-desa/assets/105181667/dbbe4d82-f58c-4d43-9625-f28fb4039613)
-
+    - password  : rahasia123
