@@ -6,7 +6,6 @@
 /.idea
 /.vscode
 /.vagrant
-/public/hot
 /storage/*.key
 /storage/framework/cache/*
 /storage/framework/sessions/*
