@@ -60,7 +60,7 @@ class BerandaController extends Controller
             'beritas'     => Berita::where('status_id', 2)->latest()->take(3)->get(),
             'sambutan'    => $sambutan,
             'skm'         => $skm,
-            'layanans'    => Layanan::latest()->take(3)->get(),
+            'layanans'    => Layanan::latest()->get(),
             'agendas'     => Agenda::where('status', 'Aktif')->latest()->take(3)->get(),
             'galleries'   => Gallery::latest()->take(9)->get() // Ambil 9 untuk 3 slide (3x3)
         ]);

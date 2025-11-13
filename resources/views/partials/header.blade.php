@@ -449,13 +449,7 @@
                     </ul>
                 </li>
 
-                <li class="dropdown {{ Request::is('layanan', 'alur-pelayanan') ? 'active' : '' }}">
-                    <a href="#"><span>Layanan Kesehatan</span> <i class="bi bi-chevron-down"></i></a>
-                    <ul>
-                        <li><a href="/layanan" class="{{ Request::is('layanan') ? 'active' : '' }}">Jenis Layanan</a></li>
-                        <li><a href="/alur-pelayanan" class="{{ Request::is('alur-pelayanan') ? 'active' : '' }}">Alur Pelayanan</a></li>
-                    </ul>
-                </li>
+                <li><a class="nav-link scrollto {{ Request::is('alur-pelayanan') ? 'active' : '' }}" href="/alur-pelayanan"><span>Alur Pelayanan</span></a></li>
 
                 <li><a class="nav-link scrollto {{ Request::is('kontak') ? 'active' : '' }}" href="/kontak"><span>Kontak</span></a></li>
 
@@ -464,26 +458,12 @@
                     $skmConfig = \App\Models\SkmConfig::first();
                 @endphp
                 @if($skmConfig && $skmConfig->login_url)
-                <li class="ms-2">
-                    <a href="{{ $skmConfig->login_url }}" target="_blank" class="login-skm-btn">
-                        Login SKM
+                <li class="ms-4">
+                    <a href="{{ $skmConfig->login_url }}" target="_blank" class="login-btn">
+                        Isi SKM
                     </a>
                 </li>
                 @endif
-
-                <!-- Desktop Login Button -->
-                <li class="ms-4">
-                    <a href="/login" class="login-btn">
-                        <i class="bi bi-box-arrow-in-right"></i> Masuk
-                    </a>
-                </li>
-
-                <!-- Mobile Login Button (shown only in mobile menu) -->
-                <li class="login-mobile">
-                    <a href="/login">
-                        <i class="bi bi-box-arrow-in-right"></i> Masuk
-                    </a>
-                </li>
 
                 <!-- Mobile Login SKM Button (shown only in mobile menu) -->
                 @if($skmConfig && $skmConfig->login_url)
