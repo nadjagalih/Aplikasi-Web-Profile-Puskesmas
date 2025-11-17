@@ -76,7 +76,7 @@
 
 <section class="counts section-bg">
     <div class="section-title">
-        <h2>Galeri Wisata Di Panggul</h2>
+        <h2>Galeri Puskesmas</h2>
     </div>
     <div class="container">
         <div class="row">

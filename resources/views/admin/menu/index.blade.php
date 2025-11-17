@@ -1,89 +1,164 @@
-@extends('admin.layouts.app')
-
-@section('title', 'Kelola Menu Website')
+@extends('admin.layouts.main')
 
 @section('content')
 <div class="container-fluid">
-    <div class="row">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="fw-bold mb-1">
+                Kelola Menu Website
+            </h4>
+            <p class="text-muted mb-0">Atur dan kelola menu navigasi website Anda</p>
+        </div>
+        <a href="{{ route('menu.create') }}" class="btn btn-primary shadow-sm">
+            <i class="ti ti-plus me-1"></i> Tambah Menu
+        </a>
+    </div>
+
+    <!-- Info Card -->
+    <div class="row mb-4">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header bg-primary">
-                    <div class="row align-items-center">
-                        <div class="col-6">
-                            <h5 class="card-title fw-semibold text-white mb-0">Manajemen Menu Website</h5>
+            <div class="card border shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-start">
+                        <div class="flex-shrink-0">
+                            <div class="bg-primary bg-opacity-10 rounded-circle p-3">
+                                <i class="ti ti-info-circle fs-4 text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="fw-bold mb-2">Menu Statis Sistem</h6>
+                            <p class="mb-2 text-muted">Menu utama berikut dikelola oleh sistem dan tidak dapat diubah:</p>
+                            <div class="row mt-3">
+                                <div class="col-md-4 mb-2">
+                                    <span class="badge bg-light text-dark border px-3 py-2">
+                                        <i class="ti ti-home me-1"></i> Beranda
+                                    </span>
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <span class="badge bg-light text-dark border px-3 py-2">
+                                        <i class="ti ti-user me-1"></i> Profil
+                                    </span>
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <span class="badge bg-light text-dark border px-3 py-2">
+                                        <i class="ti ti-news me-1"></i> Informasi
+                                    </span>
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <span class="badge bg-light text-dark border px-3 py-2">
+                                        <i class="ti ti-heart-plus me-1"></i> Layanan Kesehatan
+                                    </span>
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <span class="badge bg-light text-dark border px-3 py-2">
+                                        <i class="ti ti-mail me-1"></i> Kontak
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="card-body">
-                    @if(session('success'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            {{ session('success') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    @endif
+            </div>
+        </div>
+    </div>
 
-                    <div class="alert alert-info">
-                        <i class="ti ti-info-circle"></i> 
-                        <strong>Informasi:</strong> Menu utama berikut adalah menu statis yang tidak dapat diubah melalui sistem manajemen menu ini:
-                        <ul class="mb-0 mt-2">
-                            <li><strong>Beranda</strong></li>
-                            <li><strong>Profil</strong> (Sambutan, Profil Puskemas, Visi & Misi, Struktur Organisasi)</li>
-                            <li><strong>Informasi</strong> (Berita, Pengumuman, Agenda, Galeri, Berkas)</li>
-                            <li><strong>Layanan Kesehatan</strong> (Layanan, Alur Pelayanan)</li>
-                            <li><strong>Kontak</strong></li>
-                        </ul>
+    <!-- Main Content Card -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-bottom py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="fw-semibold mb-0">
+                            <i class="ti ti-list text-primary me-2"></i>Daftar Menu
+                        </h5>
+                        <span class="badge bg-primary-subtle text-primary px-3 py-2">
+                            <i class="ti ti-database me-1"></i>
+                            {{ $menus->count() }} Menu
+                        </span>
                     </div>
-
-                    <div class="mb-3">
-                        <a href="{{ route('menu.create') }}" class="btn btn-primary">
-                            <i class="ti ti-plus"></i> Tambah Menu
-                        </a>
-                    </div>
+                </div>
+                <div class="card-body p-0">
 
                     <div class="table-responsive">
-                        <table class="table table-bordered table-striped" id="menuTable">
-                            <thead>
+                        <table class="table table-hover align-middle" id="menuTable">
+                            <thead class="bg-light">
                                 <tr>
-                                    <th width="5%">No</th>
-                                    <th width="30%">Judul Menu</th>
-                                    <th width="25%">URL</th>
-                                    <th width="12%">Tipe</th>
-                                    <th width="8%">Urutan</th>
-                                    <th width="8%">Status</th>
-                                    <th width="12%">Aksi</th>
+                                    <th width="5%" class="text-center">
+                                        <i class="ti ti-hash"></i>
+                                    </th>
+                                    <th width="28%">
+                                        <i class="ti ti-file-text me-1"></i>Judul Menu
+                                    </th>
+                                    <th width="22%">
+                                        <i class="ti ti-link me-1"></i>URL
+                                    </th>
+                                    <th width="13%" class="text-center">
+                                        <i class="ti ti-category me-1"></i>Tipe
+                                    </th>
+                                    <th width="8%" class="text-center">
+                                        <i class="ti ti-arrows-sort me-1"></i>Urutan
+                                    </th>
+                                    <th width="10%" class="text-center">
+                                        <i class="ti ti-toggle-left me-1"></i>Status
+                                    </th>
+                                    <th width="14%" class="text-center">
+                                        <i class="ti ti-settings me-1"></i>Aksi
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody id="sortable-menu">
                                 @forelse($menus as $index => $menu)
                                     <tr data-id="{{ $menu->id }}" data-position="{{ $menu->position }}" class="menu-row parent-menu">
-                                        <td>{{ $index + 1 }}</td>
-                                        <td>
-                                            <strong>{{ $menu->title }}</strong>
-                                            @if($menu->icon)
-                                                <i class="{{ $menu->icon }} ms-2"></i>
-                                            @endif
+                                        <td class="text-center">
+                                            <span class="badge bg-primary rounded-circle px-2 py-1">{{ $index + 1 }}</span>
                                         </td>
                                         <td>
-                                            <small>{{ $menu->full_url ?? '-' }}</small>
-                                        </td>
-                                        <td>
-                                            <div class="form-check form-switch">
-                                                <input class="form-check-input toggle-type" 
-                                                       type="checkbox" 
-                                                       data-id="{{ $menu->id }}"
-                                                       data-has-page="{{ $menu->page ? 'true' : 'false' }}"
-                                                       data-has-children="{{ $menu->children->count() > 0 ? 'true' : 'false' }}"
-                                                       {{ $menu->children->count() > 0 ? 'checked' : '' }}
-                                                       title="Toggle: Parent Only / Parent with Sub">
-                                                <label class="form-check-label">
-                                                    <small id="type-label-{{ $menu->id }}">
-                                                        {{ $menu->children->count() > 0 ? 'Parent with Sub' : 'Parent Only' }}
+                                            <div class="d-flex align-items-center">
+                                                @if($menu->children->count() > 0)
+                                                    <button class="btn btn-sm btn-link p-0 me-2 toggle-submenu" 
+                                                            data-menu-id="{{ $menu->id }}"
+                                                            type="button">
+                                                        <i class="ti ti-chevron-right transition-icon"></i>
+                                                    </button>
+                                                @endif
+                                                @if($menu->icon)
+                                                    <div class="icon-box bg-primary-subtle text-primary rounded me-2 p-2">
+                                                        <i class="{{ $menu->icon }}"></i>
+                                                    </div>
+                                                @endif
+                                                <div>
+                                                    <strong class="d-block fw-bold text-dark">{{ $menu->title }}</strong>
+                                                    <small class="text-muted">
+                                                        Parent Menu
+                                                        @if($menu->children->count() > 0)
+                                                            <span class="badge bg-info-subtle text-dark fw-semibold ms-1" style="font-size: 11px;">{{ $menu->children->count() }} submenu</span>
+                                                        @endif
                                                     </small>
-                                                </label>
+                                                </div>
                                             </div>
                                         </td>
-                                        <td class="text-center">{{ $menu->order }}</td>
                                         <td>
+                                            @if($menu->full_url)
+                                                <span class="badge bg-light text-dark border">
+                                                    <i class="ti ti-external-link me-1"></i>
+                                                    {{ $menu->full_url }}
+                                                </span>
+                                            @else
+                                                <span class="text-muted fst-italic">-</span>
+                                            @endif
+                                        </td>
+                                        <td class="text-center">
+                                            @if($menu->type === 'parent_with_sub')
+                                                <span class="badge bg-info-subtle text-dark fw-semibold">Parent with Sub</span>
+                                            @else
+                                                <span class="badge bg-secondary-subtle text-dark fw-semibold">Parent Only</span>
+                                            @endif
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-secondary-subtle text-dark fw-bold px-3 py-2">{{ $menu->order }}</span>
+                                        </td>
+                                        <td class="text-center">
                                             <div class="form-check form-switch">
                                                 <input class="form-check-input toggle-status" 
                                                        type="checkbox" 
@@ -92,50 +167,55 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <div class="btn-group" role="group">
+                                            <div class="btn-group btn-group-sm" role="group">
                                                 <a href="{{ route('menu.edit', $menu->id) }}" 
-                                                   class="btn btn-sm btn-warning"
+                                                   class="btn btn-sm btn-warning shadow-sm"
+                                                   data-bs-toggle="tooltip"
                                                    title="Edit Menu">
                                                     <i class="ti ti-edit"></i>
                                                 </a>
                                                 
-                                                <span class="action-buttons-{{ $menu->id }}">
-                                                    @if($menu->children->count() > 0)
-                                                        {{-- Menu has children: show "Add Submenu" button with modal trigger --}}
-                                                        <button type="button" 
-                                                                class="btn btn-sm btn-info add-submenu-btn" 
-                                                                data-parent-id="{{ $menu->id }}"
-                                                                title="Tambah Submenu">
-                                                            <i class="ti ti-plus"></i>
-                                                        </button>
+                                                @if($menu->type === 'parent_with_sub')
+                                                    {{-- Menu type is parent_with_sub: show "Add Submenu" button --}}
+                                                    <button type="button" 
+                                                            class="btn btn-sm btn-info shadow-sm add-submenu-btn" 
+                                                            data-parent-id="{{ $menu->id }}"
+                                                            data-bs-toggle="tooltip"
+                                                            title="Tambah Submenu">
+                                                        <i class="ti ti-plus"></i>
+                                                    </button>
+                                                @else
+                                                    {{-- Menu type is parent_only: show page button (Edit or Create) --}}
+                                                    @if($menu->page)
+                                                        <a href="{{ route('pages.edit', $menu->page->id) }}" 
+                                                           class="btn btn-sm btn-success shadow-sm"
+                                                           data-bs-toggle="tooltip"
+                                                           title="Edit Halaman">
+                                                            <i class="ti ti-file-text"></i>
+                                                        </a>
                                                     @else
-                                                        {{-- Menu has no children: show page button (Edit or Create) --}}
-                                                        @if($menu->page)
-                                                            <a href="{{ route('pages.edit', $menu->page->id) }}" 
-                                                               class="btn btn-sm btn-success"
-                                                               title="Edit Halaman">
-                                                                <i class="ti ti-file-text"></i>
-                                                            </a>
-                                                        @else
-                                                            <button type="button"
-                                                                    class="btn btn-sm btn-primary create-page-btn"
-                                                                    data-menu-id="{{ $menu->id }}"
-                                                                    data-menu-title="{{ $menu->title }}"
-                                                                    data-menu-slug="{{ $menu->slug }}"
-                                                                    title="Buat Halaman">
-                                                                <i class="ti ti-file-plus"></i>
-                                                            </button>
-                                                        @endif
+                                                        <button type="button"
+                                                                class="btn btn-sm btn-primary shadow-sm create-page-btn"
+                                                                data-menu-id="{{ $menu->id }}"
+                                                                data-menu-title="{{ $menu->title }}"
+                                                                data-menu-slug="{{ $menu->slug }}"
+                                                                data-bs-toggle="tooltip"
+                                                                title="Buat Halaman"
+                                                                onclick="createPageFromMenu({{ $menu->id }}, '{{ addslashes($menu->title) }}', '{{ $menu->slug }}', this)">
+                                                            <i class="ti ti-file-plus"></i>
+                                                        </button>
                                                     @endif
-                                                </span>
+                                                @endif
                                                 
                                                 <form action="{{ route('menu.destroy', $menu->id) }}" 
                                                       method="POST" 
-                                                      class="d-inline"
-                                                      onsubmit="return confirm('Yakin ingin menghapus menu ini?')">
+                                                      class="d-inline delete-form">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-danger" title="Hapus">
+                                                    <button type="submit" 
+                                                            class="btn btn-sm btn-danger shadow-sm" 
+                                                            data-bs-toggle="tooltip"
+                                                            title="Hapus Menu">
                                                         <i class="ti ti-trash"></i>
                                                     </button>
                                                 </form>
@@ -145,23 +225,43 @@
                                     
                                     @if($menu->children->count() > 0)
                                         @foreach($menu->children as $child)
-                                            <tr data-id="{{ $child->id }}" data-position="{{ $child->position }}" class="menu-row child-menu bg-light">
-                                                <td class="border-start border-primary border-3"></td>
-                                                <td class="ps-4">
+                                            <tr data-id="{{ $child->id }}" 
+                                                data-position="{{ $child->position }}" 
+                                                class="menu-row child-menu submenu-row submenu-{{ $menu->id }}" 
+                                                style="display: none;">
+                                                <td class="text-center bg-primary-subtle">
                                                     <i class="ti ti-corner-down-right text-primary"></i>
-                                                    <span class="ms-1">{{ $child->title }}</span>
-                                                    @if($child->icon)
-                                                        <i class="{{ $child->icon }} ms-2"></i>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex align-items-center ps-4">
+                                                        @if($child->icon)
+                                                            <div class="icon-box bg-info-subtle text-info rounded me-2 p-2">
+                                                                <i class="{{ $child->icon }}"></i>
+                                                            </div>
+                                                        @endif
+                                                        <div>
+                                                            <span class="d-block fw-semibold text-dark">{{ $child->title }}</span>
+                                                            <small class="text-muted">Submenu</small>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    @if($child->full_url)
+                                                        <span class="badge bg-light text-dark border">
+                                                            <i class="ti ti-external-link me-1"></i>
+                                                            {{ $child->full_url }}
+                                                        </span>
+                                                    @else
+                                                        <span class="text-muted fst-italic">-</span>
                                                     @endif
                                                 </td>
-                                                <td>
-                                                    <small>{{ $child->full_url ?? '-' }}</small>
-                                                </td>
-                                                <td>
-                                                    <small class="text-muted">Submenu</small>
+                                                <td class="text-center">
+                                                    <span class="badge bg-info-subtle text-dark fw-semibold">Submenu</span>
                                                 </td>
                                                 <td class="text-center">
-                                                    <small class="text-muted">{{ $menu->order }}.{{ $loop->iteration }}</small>
+                                                    <span class="badge bg-secondary-subtle text-dark fw-bold px-3 py-2">
+                                                        {{ $menu->order }}.{{ $loop->iteration }}
+                                                    </span>
                                                 </td>
                                                 <td>
                                                     <div class="form-check form-switch">
@@ -172,9 +272,10 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <div class="btn-group" role="group">
+                                                    <div class="btn-group btn-group-sm" role="group">
                                                         <a href="{{ route('menu.edit', $child->id) }}" 
-                                                           class="btn btn-sm btn-warning"
+                                                           class="btn btn-sm btn-warning shadow-sm"
+                                                           data-bs-toggle="tooltip"
                                                            title="Edit Menu">
                                                             <i class="ti ti-edit"></i>
                                                         </a>
@@ -182,28 +283,33 @@
                                                         {{-- Always show page button: Edit if exists, Create if not --}}
                                                         @if($child->page)
                                                             <a href="{{ route('pages.edit', $child->page->id) }}" 
-                                                               class="btn btn-sm btn-success"
+                                                               class="btn btn-sm btn-success shadow-sm"
+                                                               data-bs-toggle="tooltip"
                                                                title="Edit Halaman">
                                                                 <i class="ti ti-file-text"></i>
                                                             </a>
                                                         @else
                                                             <button type="button"
-                                                                    class="btn btn-sm btn-primary create-page-btn"
+                                                                    class="btn btn-sm btn-primary shadow-sm create-page-btn"
                                                                     data-menu-id="{{ $child->id }}"
                                                                     data-menu-title="{{ $child->title }}"
                                                                     data-menu-slug="{{ $child->slug }}"
-                                                                    title="Buat Halaman">
+                                                                    data-bs-toggle="tooltip"
+                                                                    title="Buat Halaman"
+                                                                    onclick="createPageFromMenu({{ $child->id }}, '{{ addslashes($child->title) }}', '{{ $child->slug }}', this)">
                                                                 <i class="ti ti-file-plus"></i>
                                                             </button>
                                                         @endif
                                                         
                                                         <form action="{{ route('menu.destroy', $child->id) }}" 
                                                               method="POST" 
-                                                              class="d-inline"
-                                                              onsubmit="return confirm('Yakin ingin menghapus menu ini?')">
+                                                              class="d-inline delete-form">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button type="submit" class="btn btn-sm btn-danger" title="Hapus">
+                                                            <button type="submit" 
+                                                                    class="btn btn-sm btn-danger shadow-sm" 
+                                                                    data-bs-toggle="tooltip"
+                                                                    title="Hapus">
                                                                 <i class="ti ti-trash"></i>
                                                             </button>
                                                         </form>
@@ -214,7 +320,13 @@
                                     @endif
                                 @empty
                                     <tr>
-                                        <td colspan="7" class="text-center">Belum ada menu. Silakan tambah menu baru.</td>
+                                        <td colspan="7" class="text-center py-5">
+                                            <div class="text-muted">
+                                                <i class="ti ti-menu-2 fs-1 opacity-25 d-block mb-3"></i>
+                                                <p class="fw-semibold mb-2">Belum ada menu tersedia</p>
+                                                <small>Klik tombol "Tambah Menu" untuk membuat menu baru</small>
+                                            </div>
+                                        </td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -259,31 +371,21 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="submenu_type" class="form-label">Tipe Menu <span class="text-danger">*</span></label>
-                        <select class="form-select" id="submenu_type" name="type" required>
-                            <option value="">-- Pilih Tipe --</option>
-                            <option value="internal" selected>Internal Link</option>
-                            <option value="external">External Link</option>
-                            <option value="custom">Custom URL</option>
+                        <label for="submenu_link_type" class="form-label">Tipe Link <span class="text-danger">*</span></label>
+                        <select class="form-select" id="submenu_link_type" name="link_type" required>
+                            <option value="internal" selected>Internal (Halaman dalam website)</option>
+                            <option value="external">External (Link ke website lain)</option>
                         </select>
                     </div>
 
-                    <div class="mb-3">
+                    <div class="mb-3" id="submenu_url_field">
                         <label for="submenu_url" class="form-label">URL</label>
                         <input type="text" 
                                class="form-control" 
                                id="submenu_url" 
                                name="url"
-                               placeholder="Contoh: /berita atau https://example.com">
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="submenu_position" class="form-label">Posisi <span class="text-danger">*</span></label>
-                        <select class="form-select" id="submenu_position" name="position" required>
-                            <option value="header" selected>Header</option>
-                            <option value="footer">Footer</option>
-                            <option value="sidebar">Sidebar</option>
-                        </select>
+                               placeholder="Contoh: https://example.com">
+                        <small class="text-muted">URL akan otomatis diisi untuk link internal</small>
                     </div>
 
                     <div class="mb-3">
@@ -296,9 +398,11 @@
                                min="0">
                     </div>
 
-                    <input type="hidden" name="target" value="_self">
+                    <input type="hidden" name="type" value="parent_only">
+                    <input type="hidden" name="position" value="header">
+                    <input type="hidden" name="target" id="submenu_target" value="_self">
                     <input type="hidden" name="is_active" value="1">
-                    <input type="hidden" name="create_page" value="1">
+                    <input type="hidden" name="create_page" id="submenu_create_page" value="1">
                 </div>
                 
                 <div class="modal-footer">
@@ -312,98 +416,311 @@
 
 @push('styles')
 <style>
-/* Custom Table Styling */
-#menuTable {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    background-color: #fff;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-    border: 2px solid #333 !important;
-    border-radius: 10px !important;
-    overflow: hidden !important;
+/* Card Styling */
+.card {
+    transition: all 0.3s ease;
 }
 
-#menuTable thead {
-    background-color: #4a90e2 !important;
+/* Icon Box */
+.icon-box {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+/* Toggle Submenu Button */
+.toggle-submenu {
+    color: #6c757d;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.toggle-submenu:hover {
+    color: #495057;
+}
+
+.toggle-submenu .transition-icon {
+    transition: transform 0.3s ease;
+    font-size: 18px;
+}
+
+.toggle-submenu.active .transition-icon {
+    transform: rotate(90deg);
+}
+
+/* Submenu Rows */
+.submenu-row {
+    transition: all 0.3s ease;
+}
+
+/* Table Styling */
+#menuTable {
+    margin-bottom: 0;
 }
 
 #menuTable thead th {
-    background-color: #4a90e2 !important;
-    color: white !important;
-    padding: 12px 15px !important;
-    text-align: left !important;
-    font-weight: 600 !important;
-    font-size: 13px !important;
+    background-color: #f8f9fa;
+    color: #212529;
+    font-weight: 700;
+    font-size: 13px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    border: 2px solid #3a7bc8 !important;
-    vertical-align: middle !important;
-}
-
-#menuTable thead th:first-child {
-    border-top-left-radius: 8px !important;
-}
-
-#menuTable thead th:last-child {
-    border-top-right-radius: 8px !important;
+    border-bottom: 2px solid #dee2e6;
+    padding: 16px 12px;
+    vertical-align: middle;
 }
 
 #menuTable tbody tr {
-    border: 2px solid #999 !important;
-    transition: background-color 0.2s ease;
-}
-
-#menuTable tbody tr:nth-child(odd) {
-    background-color: #f9f9f9 !important;
-}
-
-#menuTable tbody tr:nth-child(even) {
-    background-color: #ffffff !important;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid #f0f0f0;
 }
 
 #menuTable tbody tr:hover {
-    background-color: #f0f8ff !important;
+    background-color: #f8f9fa;
 }
 
 #menuTable tbody tr.child-menu {
-    background-color: #e8f4f8 !important;
+    background-color: #f8f9fa;
 }
 
 #menuTable tbody tr.child-menu:hover {
-    background-color: #d0e9f5 !important;
-}
-
-#menuTable tbody tr:last-child td:first-child {
-    border-bottom-left-radius: 8px !important;
-}
-
-#menuTable tbody tr:last-child td:last-child {
-    border-bottom-right-radius: 8px !important;
+    background-color: #e9ecef;
 }
 
 #menuTable td {
-    padding: 10px 15px !important;
-    font-size: 14px !important;
-    color: #333 !important;
-    vertical-align: middle !important;
-    border: 2px solid #999 !important;
+    padding: 14px 12px;
+    vertical-align: middle;
+    border: none;
+    color: #212529;
+    font-weight: 500;
 }
 
-#menuTable th {
-    text-align: left !important;
-    vertical-align: middle !important;
+/* Button Styling */
+.btn {
+    font-weight: 500;
+    transition: all 0.2s ease;
 }
 
-.table-responsive {
-    border-radius: 10px !important;
-    overflow: hidden !important;
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn-group-sm .btn,
+.btn-group .btn-sm {
+    padding: 8px 12px;
+    font-size: 14px;
+    line-height: 1.2;
+    min-width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-group-sm .btn i,
+.btn-group .btn-sm i {
+    font-size: 16px;
+}
+
+/* Ensure btn-group buttons are aligned */
+.btn-group {
+    display: inline-flex;
+    align-items: stretch;
+}
+
+.btn-group .btn {
+    border-radius: 0;
+}
+
+.btn-group .btn:first-child {
+    border-top-left-radius: 0.375rem;
+    border-bottom-left-radius: 0.375rem;
+}
+
+.btn-group .btn:last-child,
+.btn-group form:last-child .btn {
+    border-top-right-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+}
+
+/* Badge Styling */
+.badge {
+    font-weight: 600;
+    padding: 6px 12px;
+}
+
+.badge.bg-light {
+    color: #212529 !important;
+    font-weight: 600;
+}
+/* Toggle Switch */
+.form-check-input {
+    width: 2.5em;
+    height: 1.3em;
+    cursor: pointer;
+}
+
+.form-check-input:checked {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+/* Shadow Utilities */
+.shadow-sm {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .btn-group {
+        flex-direction: column;
+    }
+    
+    .icon-box {
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+    }
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.menu-row {
+    animation: fadeIn 0.3s ease-in-out;
 }
 </style>
 @endpush
 
 @push('scripts')
 <script>
+// Global function untuk create page (dipanggil dari onclick)
+function createPageFromMenu(menuId, menuTitle, menuSlug, button) {
+    const $button = $(button);
+    
+    Swal.fire({
+        title: 'Buat Halaman Baru?',
+        text: 'Akan membuat halaman baru untuk menu "' + menuTitle + '"',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Ya, Buat!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $button.prop('disabled', true).html('<i class="ti ti-loader"></i>');
+            
+            $.ajax({
+                url: '/admin/pages/create-from-menu',
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    menu_id: menuId,
+                    title: menuTitle,
+                    slug: menuSlug
+                },
+                success: function(response) {
+                    if(response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: 'Halaman berhasil dibuat!',
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(() => {
+                            window.location.href = '/admin/pages/' + response.page_id + '/edit';
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    $button.prop('disabled', false).html('<i class="ti ti-file-plus"></i>');
+                    let errorMsg = 'Gagal membuat halaman!';
+                    if(xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMsg = xhr.responseJSON.message;
+                    }
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: errorMsg,
+                        showConfirmButton: true
+                    });
+                }
+            });
+        }
+    });
+}
+
 $(document).ready(function() {
+    // Initialize Bootstrap tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    // Session messages
+    var successMessage = {!! json_encode(session('success')) !!};
+    var errorMessage = {!! json_encode(session('error')) !!};
+
+    // Show SweetAlert for success message
+    if(successMessage) {
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: successMessage,
+            timer: 3000,
+            showConfirmButton: false,
+            position: 'top-end',
+            toast: true
+        });
+    }
+
+    if(errorMessage) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: errorMessage,
+            timer: 3000,
+            showConfirmButton: false,
+            position: 'top-end',
+            toast: true
+        });
+    }
+
+    // Delete confirmation with SweetAlert
+    $(document).on('submit', '.delete-form', function(e) {
+        e.preventDefault();
+        const form = this;
+        
+        Swal.fire({
+            title: 'Apakah Anda yakin?',
+            text: "Menu ini akan dihapus permanen!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+    });
+
     // Toggle Status
     $('.toggle-status').change(function() {
         const menuId = $(this).data('id');
@@ -418,140 +735,75 @@ $(document).ready(function() {
             },
             success: function(response) {
                 if(response.success) {
-                    console.log(response.message);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: 'Status menu berhasil diubah',
+                        timer: 2000,
+                        showConfirmButton: false,
+                        position: 'top-end',
+                        toast: true
+                    });
                 }
             },
             error: function() {
                 // Revert checkbox on error
                 checkbox.prop('checked', !isChecked);
-                alert('Gagal mengubah status menu');
-            }
-        });
-    });
-
-    // Create Page Button
-    $('.create-page-btn').click(function() {
-        const menuId = $(this).data('menu-id');
-        const menuTitle = $(this).data('menu-title');
-        const menuSlug = $(this).data('menu-slug');
-        const button = $(this);
-        
-        if(confirm('Buat halaman baru untuk menu "' + menuTitle + '"?')) {
-            button.prop('disabled', true).html('<i class="ti ti-loader"></i>');
-            
-            $.ajax({
-                url: '/admin/pages/create-from-menu',
-                type: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}',
-                    menu_id: menuId,
-                    title: menuTitle,
-                    slug: menuSlug
-                },
-                success: function(response) {
-                    if(response.success) {
-                        alert('Halaman berhasil dibuat!');
-                        // Redirect to edit page
-                        window.location.href = '/admin/pages/' + response.page_id + '/edit';
-                    }
-                },
-                error: function() {
-                    alert('Gagal membuat halaman!');
-                    button.prop('disabled', false).html('<i class="ti ti-file-plus"></i>');
-                }
-            });
-        }
-    });
-
-    // Toggle Type (Parent Only / Parent with Sub)
-    $('.toggle-type').change(function() {
-        const menuId = $(this).data('id');
-        const hasPage = $(this).data('has-page');
-        const hasChildren = $(this).data('has-children');
-        const isChecked = $(this).is(':checked');
-        const checkbox = $(this);
-        
-        if (isChecked) {
-            // Switch to "Parent with Sub"
-            if (hasPage === 'true') {
-                if (!confirm('Menu ini memiliki halaman. Mengubah ke "Parent with Sub" akan menyembunyikan tombol edit halaman. Lanjutkan?')) {
-                    checkbox.prop('checked', false);
-                    return;
-                }
-            }
-            
-            $('#type-label-' + menuId).text('Parent with Sub');
-            
-            // Update action buttons to show "Add Submenu"
-            $('.action-buttons-' + menuId).html(
-                '<button type="button" class="btn btn-sm btn-info add-submenu-btn" data-parent-id="' + menuId + '" title="Tambah Submenu">' +
-                '<i class="ti ti-plus"></i></button>'
-            );
-            
-            // Re-bind modal trigger
-            bindAddSubmenuButton();
-        } else {
-            // Switch to "Parent Only"
-            // Only show confirmation if menu already has children
-            if (hasChildren === 'true') {
-                if (confirm('Menu ini memiliki submenu. Mengubah kembali ke "Parent Only"?')) {
-                    $('#type-label-' + menuId).text('Parent Only');
-                    location.reload();
-                } else {
-                    checkbox.prop('checked', true);
-                }
-            } else {
-                // No children, just switch directly
-                $('#type-label-' + menuId).text('Parent Only');
-                location.reload();
-            }
-        }
-    });
-
-    function bindCreatePageButton() {
-        $('.create-page-btn').off('click').on('click', function() {
-            const menuId = $(this).data('menu-id');
-            const button = $(this);
-            
-            if(confirm('Buat halaman baru untuk menu ini?')) {
-                button.prop('disabled', true).html('<i class="ti ti-loader"></i>');
-                
-                $.ajax({
-                    url: '/admin/pages/create-from-menu',
-                    type: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        menu_id: menuId
-                    },
-                    success: function(response) {
-                        if(response.success) {
-                            window.location.href = '/admin/pages/' + response.page_id + '/edit';
-                        }
-                    },
-                    error: function() {
-                        alert('Gagal membuat halaman!');
-                        button.prop('disabled', false).html('<i class="ti ti-file-plus"></i>');
-                    }
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: 'Gagal mengubah status menu',
+                    timer: 2000,
+                    showConfirmButton: false,
+                    position: 'top-end',
+                    toast: true
                 });
             }
         });
-    }
+    });
 
     // Handle Add Submenu Modal
-    function bindAddSubmenuButton() {
-        $('.add-submenu-btn').off('click').on('click', function() {
-            const parentId = $(this).data('parent-id');
-            $('#parent_id').val(parentId);
-            $('#submenuForm')[0].reset();
-            $('#parent_id').val(parentId); // Set again after reset
-            $('#addSubmenuModal').modal('show');
-        });
-    }
+    $(document).on('click', '.add-submenu-btn', function() {
+        const parentId = $(this).data('parent-id');
+        $('#parent_id').val(parentId);
+        $('#submenuForm')[0].reset();
+        $('#parent_id').val(parentId); // Set again after reset
+        $('#submenu_link_type').val('internal').trigger('change');
+        $('#addSubmenuModal').modal('show');
+    });
 
-    // Initialize add submenu button
-    bindAddSubmenuButton();
-
-    // Auto generate slug for submenu
+    // Handle submenu link type change
+    $('#submenu_link_type').on('change', function() {
+        const linkType = $(this).val();
+        const $urlField = $('#submenu_url');
+        const $slugField = $('#submenu_slug');
+        const $targetField = $('#submenu_target');
+        const $createPageField = $('#submenu_create_page');
+        
+        if (linkType === 'external') {
+            // External link: show URL field, set target to _blank, disable page creation
+            $urlField.prop('readonly', false)
+                     .prop('required', true)
+                     .val('')
+                     .attr('placeholder', 'Contoh: https://example.com');
+            $urlField.closest('.mb-3').find('small').text('Masukkan URL lengkap dengan https://');
+            $slugField.prop('readonly', false); // Allow manual slug for external
+            $targetField.val('_blank');
+            $createPageField.val('0');
+        } else {
+            // Internal link: URL auto-generated from slug, set target to _self, enable page creation
+            $urlField.prop('readonly', true)
+                     .prop('required', false)
+                     .val('')
+                     .attr('placeholder', 'URL akan otomatis diisi dari slug');
+            $urlField.closest('.mb-3').find('small').text('URL akan otomatis diisi untuk link internal');
+            $slugField.prop('readonly', true);
+            $targetField.val('_self');
+            $createPageField.val('1');
+        }
+    });
+    
+    // Update slug when title changes
     $('#submenu_title').on('keyup', function() {
         const title = $(this).val();
         $.ajax({
@@ -563,6 +815,38 @@ $(document).ready(function() {
             }
         });
     });
+
+    // Trigger change on page load to set initial state
+    $('#submenu_link_type').trigger('change');
+
+    // Toggle Submenu Visibility
+    $('.toggle-submenu').on('click', function() {
+        const menuId = $(this).data('menu-id');
+        const submenuRows = $('.submenu-' + menuId);
+        const icon = $(this).find('.transition-icon');
+        
+        submenuRows.slideToggle(300);
+        $(this).toggleClass('active');
+    });
+    
+    // Update URL when title changes (for internal links only)
+    $('#submenu_title').on('keyup', function() {
+        const linkType = $('#submenu_link_type').val();
+        if (linkType === 'internal') {
+            const title = $(this).val();
+            $.ajax({
+                url: '/admin/menu/slug',
+                type: 'GET',
+                data: { title: title },
+                success: function(response) {
+                    $('#submenu_slug').val(response.slug);
+                }
+            });
+        }
+    });
+
+    // Trigger change on page load to set initial state
+    $('#submenu_link_type').trigger('change');
 });
 </script>
 @endpush

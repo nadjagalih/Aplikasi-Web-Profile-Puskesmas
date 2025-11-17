@@ -30,7 +30,7 @@
                         <div class="mb-3">
                             <label for="deskripsi" class="form-label">Deskripsi <span style="color: red">*</span></label>
                             <textarea class="form-control @error('deskripsi') is-invalid @enderror" 
-                                id="editor_deskripsi" name="deskripsi" rows="5" required>{{ old('deskripsi') }}</textarea>
+                                id="editor_deskripsi" name="deskripsi" rows="5">{{ old('deskripsi') }}</textarea>
                             @error('deskripsi')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -90,25 +90,80 @@
     <!-- Ck Editor 5 -->
     <script>
         let editorDeskripsi, editorPersyaratan;
+        let editorsReady = false;
         
-        // Editor untuk Deskripsi
-        ClassicEditor
-            .create(document.querySelector('#editor_deskripsi'))
-            .then(editor => {
-                editorDeskripsi = editor;
-            })
-            .catch(error => {
-                console.error('Error initializing deskripsi editor:', error);
-            });
+        // Tunggu DOM ready
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM Ready - Initializing CKEditor...');
+            
+            // Editor untuk Deskripsi
+            ClassicEditor
+                .create(document.querySelector('#editor_deskripsi'), {
+                    toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|', 'undo', 'redo']
+                })
+                .then(editor => {
+                    console.log('Deskripsi editor initialized');
+                    editorDeskripsi = editor;
+                    checkEditorsReady();
+                })
+                .catch(error => {
+                    console.error('Error initializing deskripsi editor:', error);
+                });
 
-        // Editor untuk Persyaratan
-        ClassicEditor
-            .create(document.querySelector('#editor_persyaratan'))
-            .then(editor => {
-                editorPersyaratan = editor;
-            })
-            .catch(error => {
-                console.error('Error initializing persyaratan editor:', error);
-            });
+            // Editor untuk Persyaratan
+            ClassicEditor
+                .create(document.querySelector('#editor_persyaratan'), {
+                    toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|', 'undo', 'redo']
+                })
+                .then(editor => {
+                    console.log('Persyaratan editor initialized');
+                    editorPersyaratan = editor;
+                    checkEditorsReady();
+                })
+                .catch(error => {
+                    console.error('Error initializing persyaratan editor:', error);
+                });
+            
+            function checkEditorsReady() {
+                if (editorDeskripsi && editorPersyaratan) {
+                    editorsReady = true;
+                    console.log('All editors ready!');
+                    attachFormSubmitHandler();
+                }
+            }
+            
+            function attachFormSubmitHandler() {
+                const form = document.querySelector('form');
+                if (!form) {
+                    console.error('Form not found!');
+                    return;
+                }
+                
+                console.log('Attaching submit handler to form...');
+                form.addEventListener('submit', function(e) {
+                    console.log('Form submit triggered!');
+                    
+                    try {
+                        // Update textarea dengan data dari CKEditor
+                        if (editorDeskripsi) {
+                            const deskripsiData = editorDeskripsi.getData();
+                            document.querySelector('#editor_deskripsi').value = deskripsiData;
+                            console.log('Deskripsi updated:', deskripsiData.substring(0, 50) + '...');
+                        }
+                        if (editorPersyaratan) {
+                            const persyaratanData = editorPersyaratan.getData();
+                            document.querySelector('#editor_persyaratan').value = persyaratanData;
+                            console.log('Persyaratan updated:', persyaratanData.substring(0, 50) + '...');
+                        }
+                        console.log('Form will now submit...');
+                        // Form akan tetap disubmit (tidak ada preventDefault)
+                    } catch (error) {
+                        console.error('Error updating textareas:', error);
+                    }
+                });
+                
+                console.log('Submit handler attached successfully');
+            }
+        });
     </script>
 @endsection

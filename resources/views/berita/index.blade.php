@@ -135,9 +135,8 @@
 
 <section class="counts section-bg">
   <div class="container">
-
     <div class="section-title">
-      <h2>Berita Kecamatan</h2>
+      <h2>Berita Puskesmas</h2>
     </div>
 
     <div class="row">

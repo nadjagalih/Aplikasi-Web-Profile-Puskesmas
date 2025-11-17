@@ -64,7 +64,8 @@
                                                     default => 'fa-file text-muted'
                                                 };
                                             @endphp
-                                            <i class="fas {{ $iconClass }}"></i> {{ $item->file_name }}
+                                            <i class="fas {{ $iconClass }}"></i> 
+                                            <span title="{{ $item->file_name }}">{{ Str::limit($item->file_name, 30) }}</span>
                                         </td>
                                         <td>{{ $item->file_size ?? '-' }}</td>
                                         <td><span class="badge text-bg-secondary p-2">{{ $item->download_count }}</span></td>

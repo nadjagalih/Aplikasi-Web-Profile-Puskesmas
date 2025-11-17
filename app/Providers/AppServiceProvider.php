@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\URL;
 use App\Models\Situs;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,6 +24,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Force HTTPS in production for TLS Certificate (Category 8) and Mixed Content (Category 9)
+        if (env('FORCE_HTTPS', false) || env('APP_ENV') === 'production') {
+            URL::forceScheme('https');
+        }
+
         Paginator::useBootstrapFive();
         Paginator::useBootstrapFour();
 

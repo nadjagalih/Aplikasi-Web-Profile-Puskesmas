@@ -20,10 +20,12 @@
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 
   <!-- Bootstrap Icon-->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" 
+        integrity="sha384-4LISF5TTJX/fLmGSxO53rV4miRxdg84mZsxmO8Rx5jGtp/LbrixFETvWa5a6sESd" 
+        crossorigin="anonymous">
 
-  <!-- Ck Editor -->
-  <script src="https://cdn.ckeditor.com/ckeditor5/39.0.2/classic/ckeditor.js"></script>
+  <!-- CKEditor 5 -->
+  <script src="https://cdn.ckeditor.com/ckeditor5/39.0.2/classic/ckeditor.js" crossorigin="anonymous"></script>
 
   <!-- Appex -->
   <script src="/admin/assets/libs/apexcharts/dist/apexcharts.min.js"></script>
@@ -43,33 +45,101 @@
   </div>
   <script src="/admin/assets/libs/jquery/dist/jquery.min.js"></script>
   <script src="/admin/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-  <script type="text/javascript" src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <!-- DataTables -->
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
   <script src="/admin/assets/js/sidebarmenu.js"></script>
   <script src="/admin/assets/js/app.min.js"></script>
   <script src="/admin/assets/libs/simplebar/dist/simplebar.js"></script>
   <script src="/admin/assets/js/dashboard.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+  
+  <!-- Sweet Alert 2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" crossorigin="anonymous"></script>
   @include('sweetalert::alert')
+  
   <script>
-    $(".swal-confirm").click(function(e) {
-      e.preventDefault();
-      var form = $(this).attr('data-form');
-      Swal.fire({
-        title: 'Hapus Data Ini ?',
-        text: "Anda tidak akan dapat mengembalikan data yang dihapus !",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Ya, hapus!',
-        cancelButtonText: 'Batal'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          $('#' + form).submit();
+    // jQuery-based delete confirmation for backward compatibility
+    $(document).ready(function() {
+      // Handle swal-confirm buttons with data-form attribute
+      $(document).on('click', '.swal-confirm', function(e) {
+        e.preventDefault();
+        var formId = $(this).attr('data-form') || $(this).data('form');
+        
+        if (formId) {
+          var form = $('#' + formId);
+          
+          if (form.length > 0) {
+            Swal.fire({
+              title: 'Hapus Data Ini?',
+              text: "Anda tidak akan dapat mengembalikan data yang dihapus!",
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#d33',
+              cancelButtonColor: '#3085d6',
+              confirmButtonText: 'Ya, hapus!',
+              cancelButtonText: 'Batal'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                form.submit();
+              }
+            });
+          }
         }
-      })
+      });
+      
+      // Handle delete-form class (for menu.blade.php and others)
+      $(document).on('submit', '.delete-form', function(e) {
+        e.preventDefault();
+        var form = $(this);
+        
+        Swal.fire({
+          title: 'Hapus Data Ini?',
+          text: "Data ini akan dihapus permanen!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Ya, Hapus!',
+          cancelButtonText: 'Batal'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Remove event handler to prevent infinite loop, then submit
+            form.off('submit').submit();
+          }
+        });
+      });
+      
+      // Handle inline confirm (for berkas, agenda, alur-pelayanan)
+      $('form[onsubmit*="confirm"]').each(function() {
+        var form = $(this);
+        var originalOnsubmit = form.attr('onsubmit');
+        
+        // Remove inline onsubmit
+        form.removeAttr('onsubmit');
+        
+        // Add SweetAlert handler
+        form.on('submit', function(e) {
+          e.preventDefault();
+          
+          Swal.fire({
+            title: 'Hapus Data Ini?',
+            text: "Anda tidak akan dapat mengembalikan data yang dihapus!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              form.off('submit').submit();
+            }
+          });
+        });
+      });
     });
   </script>
+  
+  @stack('scripts')
 </body>
 
 </html>

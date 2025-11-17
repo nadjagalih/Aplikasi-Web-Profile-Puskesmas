@@ -119,6 +119,8 @@ Route::resource('/admin/menu', AdminMenuController::class);
 
 // Page Management Routes
 Route::get('/admin/pages', [AdminPageController::class, 'index'])->name('pages.index');
+Route::get('/admin/pages/create', [AdminPageController::class, 'create'])->name('pages.create');
+Route::post('/admin/pages', [AdminPageController::class, 'store'])->name('pages.store');
 Route::get('/admin/pages/{id}/edit', [AdminPageController::class, 'edit'])->name('pages.edit');
 Route::put('/admin/pages/{id}', [AdminPageController::class, 'update'])->name('pages.update');
 Route::post('/admin/pages/{id}/toggle', [AdminPageController::class, 'toggleStatus'])->name('pages.toggle');

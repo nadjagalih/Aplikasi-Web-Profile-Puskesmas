@@ -30,12 +30,11 @@
                             <thead>
                                 <tr>
                                     <th width="5%">No</th>
-                                    <th width="25%">Judul</th>
-                                    <th width="15%">Tanggal Mulai</th>
-                                    <th width="15%">Tanggal Selesai</th>
+                                    <th width="30%">Judul</th>
+                                    <th width="18%">Tanggal Mulai</th>
+                                    <th width="18%">Tanggal Selesai</th>
                                     <th width="20%">Tempat</th>
-                                    <th width="10%">Warna</th>
-                                    <th width="10%">Aksi</th>
+                                    <th width="9%">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -47,19 +46,13 @@
                                         <td>{{ $agenda->tanggal_selesai ? $agenda->tanggal_selesai->format('d/m/Y H:i') : '-' }}</td>
                                         <td>{{ $agenda->tempat ?? '-' }}</td>
                                         <td>
-                                            <div class="d-flex align-items-center">
-                                                <span class="color-box" {!! 'style="background-color: ' . $agenda->warna . '"' !!}></span>
-                                            </div>
-                                        </td>
-                                        <td>
                                             <a href="{{ route('agenda.edit', $agenda->id) }}" 
                                                class="btn btn-warning mb-1">
                                                 <i class="ti ti-edit"></i>
                                             </a>
                                             <form action="{{ route('agenda.destroy', $agenda->id) }}" 
                                                   method="POST" 
-                                                  class="d-inline"
-                                                  onsubmit="return confirm('Yakin ingin menghapus agenda ini?')">
+                                                  class="d-inline delete-form">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-danger mb-1">
@@ -70,7 +63,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="7" class="text-center">Belum ada data agenda</td>
+                                        <td colspan="6" class="text-center">Belum ada data agenda</td>
                                     </tr>
                                 @endforelse
                             </tbody>

@@ -45,11 +45,12 @@ class AdminLayananController extends Controller
             'deskripsi.required'     => 'Deskripsi wajib diisi!',
             'status.required'        => 'Status wajib dipilih!',
             'gambar.image'           => 'File harus berupa gambar!',
+            'gambar.mimes'           => 'Format gambar harus jpeg, png, atau jpg!',
             'gambar.max'             => 'Ukuran gambar maksimal 2MB!'
         ]);
 
         if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
+            return redirect()->back()->withErrors($validator)->withInput();
         }
 
         $data = [
@@ -106,11 +107,12 @@ class AdminLayananController extends Controller
             'deskripsi.required'     => 'Deskripsi wajib diisi!',
             'status.required'        => 'Status wajib dipilih!',
             'gambar.image'           => 'File harus berupa gambar!',
+            'gambar.mimes'           => 'Format gambar harus jpeg, png, atau jpg!',
             'gambar.max'             => 'Ukuran gambar maksimal 2MB!'
         ]);
 
         if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
+            return redirect()->back()->withErrors($validator)->withInput();
         }
 
         $data = [

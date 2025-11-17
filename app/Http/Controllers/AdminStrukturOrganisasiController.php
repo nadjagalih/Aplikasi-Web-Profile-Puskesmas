@@ -37,30 +37,40 @@ class AdminStrukturOrganisasiController extends Controller
         $validator = Validator::make($request->all(), [
             'nama'      => 'required',
             'jabatan'   => 'required',
-            'foto'      => 'required|mimes:jpeg,jpg,png',
+            'foto'      => 'required|image|mimes:jpeg,jpg,png|max:2048',
         ], [
 
             'nama.required'     => 'Wajib menambahkan nama struktur organisasi !',
             'jabatan.required'  => 'Wajib menambahkan jabatan struktur organisasi !',
             'foto.required'     => 'Wajib menambahkan foto struktur organisasi !',
+            'foto.image'        => 'File harus berupa gambar !',
             'foto.mimes'        => 'Format gambar yang di izinkan Jpeg, Jpg, Png',
+            'foto.max'          => 'Ukuran gambar maksimal 2MB !',
         ]);
 
+        // CEK VALIDASI DULU SEBELUM UPLOAD
+        if($validator->fails()){
+            return redirect('/admin/struktur-organisasi/create')
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        // BARU UPLOAD FILE SETELAH VALIDASI LOLOS
         if($request->hasFile('foto')){
             $path       = 'img-struktur-organisasi/';
             $file       = $request->file('foto');
             $extension  = $file->getClientOriginalExtension();
             $fileName   = uniqid(). '.' . $extension;
+            
+            // Pastikan direktori ada
+            if (!file_exists(public_path('storage/' . $path))) {
+                mkdir(public_path('storage/' . $path), 0755, true);
+            }
+            
             $file->move(public_path('storage/' . $path), $fileName);
             $foto       = $path . $fileName;
         } else {
             $foto       = null;
-        }
-
-        if($validator->fails()){
-            return redirect('/admin/struktur-organisasi/create')
-                ->withErrors($validator)
-                ->withInput();
         }
 
         $strukturOrganisasi = StrukturOrganisasi::create([

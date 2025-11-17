@@ -27,27 +27,6 @@
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
-                <div class="mb-3">
-                    <label for="judul" class="form-label">Judul <span style="color: red">*</span></label>
-                    <input type="text" class="form-control" name="judul" value="{{ old('judul', $slider->judul) }}">
-                    @error('judul')
-                        <div class="text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
-                <div class="mb-3">
-                    <label for="deskripsi" class="form-label">Deskripsi <span style="color: red">*</span></label>
-                    <textarea class="form-control" name="deskripsi" rows="3">{{ old('deskripsi', $slider->deskripsi) }}</textarea>
-                    @error('deskripsi')
-                        <div class="text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
-                <div class="mb-3">
-                    <label for="link_btn" class="form-label">Url Button <span style="color: red">*</span></label>
-                    <input type="text" class="form-control" name="link_btn" value="{{ old('link_btn', $slider->link_btn) }}">
-                    @error('link_btn')
-                        <div class="text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
                 <button type="submit" class="btn btn-primary m-1 float-end">Update</button>
             </form>
         </div>

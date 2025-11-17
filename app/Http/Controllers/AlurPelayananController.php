@@ -10,7 +10,7 @@ class AlurPelayananController extends Controller
     public function index()
     {
         // Get single alur pelayanan record
-        $alurPelayanan = AlurPelayanan::where('status', 'Aktif')->first();
+        $alurPelayanan = AlurPelayanan::first();
             
         return view('alur-pelayanan.index', compact('alurPelayanan'));
     }

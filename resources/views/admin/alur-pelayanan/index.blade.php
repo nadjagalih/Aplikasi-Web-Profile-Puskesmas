@@ -89,11 +89,12 @@
                                         <hr>
                                         <form action="{{ route('alur-pelayanan.destroy', $alurPelayanan->id) }}" 
                                               method="POST" 
-                                              onsubmit="return confirm('Yakin ingin menghapus gambar alur pelayanan?')">
+                                              id="form-hapus-alur" 
+                                              class="delete-form">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-danger btn-block">
-                                                <i class="fas fa-trash"></i> Hapus Gambar
+                                                <i class="fas fa-trash"></i> Hapus Data
                                             </button>
                                         </form>
 

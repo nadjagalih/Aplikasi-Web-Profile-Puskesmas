@@ -8,7 +8,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header bg-primary">
-                    <h5 class="card-title fw-semibold text-white mb-0">Edit Menu</h5>
+                    <h5 class="card-title fw-semibold text-white mb-0">Edit Menu: {{ $menu->title }}</h5>
                 </div>
                 <div class="card-body">
                     <form action="{{ route('menu.update', $menu->id) }}" method="POST">
@@ -57,9 +57,8 @@
                                             name="type" 
                                             required>
                                         <option value="">-- Pilih Tipe --</option>
-                                        <option value="internal" {{ old('type', $menu->type) == 'internal' ? 'selected' : '' }}>Internal Link</option>
-                                        <option value="external" {{ old('type', $menu->type) == 'external' ? 'selected' : '' }}>External Link</option>
-                                        <option value="custom" {{ old('type', $menu->type) == 'custom' ? 'selected' : '' }}>Custom URL</option>
+                                        <option value="parent_only" {{ old('type', $menu->type) == 'parent_only' ? 'selected' : '' }}>Parent Only</option>
+                                        <option value="parent_with_sub" {{ old('type', $menu->type) == 'parent_with_sub' ? 'selected' : '' }}>Parent with Sub</option>
                                     </select>
                                     @error('type')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -77,9 +76,8 @@
                                            value="{{ old('url', $menu->url) }}"
                                            placeholder="Contoh: /berita atau https://example.com">
                                     <small class="text-muted">
-                                        <span id="url-help-internal" style="display:none;">Masukkan URL internal (contoh: /berita, /kontak)</span>
-                                        <span id="url-help-external" style="display:none;">Masukkan URL lengkap (contoh: https://google.com)</span>
-                                        <span id="url-help-custom" style="display:none;">Masukkan URL custom sesuai kebutuhan</span>
+                                        <span id="url-help-parent_only" style="display:none;">URL untuk halaman (contoh: /profil, /kontak)</span>
+                                        <span id="url-help-parent_with_sub" style="display:none;">Tidak perlu URL (menu ini hanya sebagai parent/induk)</span>
                                     </small>
                                     @error('url')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -90,44 +88,6 @@
 
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="parent_id" class="form-label">Menu Induk (Parent)</label>
-                                    <select class="form-select @error('parent_id') is-invalid @enderror" 
-                                            id="parent_id" 
-                                            name="parent_id">
-                                        <option value="">-- Tidak Ada (Menu Utama) --</option>
-                                        @foreach($parentMenus as $parent)
-                                            <option value="{{ $parent->id }}" {{ old('parent_id', $menu->parent_id) == $parent->id ? 'selected' : '' }}>
-                                                {{ $parent->title }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    <small class="text-muted">Pilih menu induk jika ini adalah submenu</small>
-                                    @error('parent_id')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="target" class="form-label">Target Link <span class="text-danger">*</span></label>
-                                    <select class="form-select @error('target') is-invalid @enderror" 
-                                            id="target" 
-                                            name="target" 
-                                            required>
-                                        <option value="_self" {{ old('target', $menu->target) == '_self' ? 'selected' : '' }}>Same Window (_self)</option>
-                                        <option value="_blank" {{ old('target', $menu->target) == '_blank' ? 'selected' : '' }}>New Tab (_blank)</option>
-                                    </select>
-                                    @error('target')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="icon" class="form-label">Icon (Opsional)</label>
                                     <input type="text" 
@@ -143,7 +103,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="order" class="form-label">Urutan <span class="text-danger">*</span></label>
                                     <input type="number" 
@@ -159,24 +119,11 @@
                                     @enderror
                                 </div>
                             </div>
-
-                            <div class="col-md-4">
-                                <div class="mb-3">
-                                    <label for="position" class="form-label">Posisi Menu <span class="text-danger">*</span></label>
-                                    <select class="form-select @error('position') is-invalid @enderror" 
-                                            id="position" 
-                                            name="position" 
-                                            required>
-                                        <option value="header" {{ old('position', $menu->position) == 'header' ? 'selected' : '' }}>Header</option>
-                                        <option value="footer" {{ old('position', $menu->position) == 'footer' ? 'selected' : '' }}>Footer</option>
-                                        <option value="sidebar" {{ old('position', $menu->position) == 'sidebar' ? 'selected' : '' }}>Sidebar</option>
-                                    </select>
-                                    @error('position')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
                         </div>
+
+                        <!-- Hidden fields -->
+                        <input type="hidden" name="position" value="header">
+                        <input type="hidden" name="target" value="_self">
 
                         <div class="mb-3">
                             <div class="form-check">
@@ -210,6 +157,34 @@
 @push('scripts')
 <script>
 $(document).ready(function() {
+    // Session messages with SweetAlert
+    var successMessage = {!! json_encode(session('success')) !!};
+    var errorMessage = {!! json_encode(session('error')) !!};
+
+    if(successMessage) {
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: successMessage,
+            timer: 3000,
+            showConfirmButton: false,
+            position: 'top-end',
+            toast: true
+        });
+    }
+
+    if(errorMessage) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: errorMessage,
+            timer: 3000,
+            showConfirmButton: false,
+            position: 'top-end',
+            toast: true
+        });
+    }
+
     // Auto generate slug from title
     $('#title').on('keyup', function() {
         const title = $(this).val();
@@ -219,6 +194,9 @@ $(document).ready(function() {
             data: { title: title },
             success: function(response) {
                 $('#slug').val(response.slug);
+            },
+            error: function() {
+                console.error('Gagal generate slug');
             }
         });
     });
@@ -230,6 +208,16 @@ $(document).ready(function() {
         
         if(type) {
             $('#url-help-' + type).show();
+        }
+
+        // Show/hide URL field based on type
+        if (type === 'parent_only') {
+            $('#url').prop('required', true);
+        } else if (type === 'parent_with_sub') {
+            $('#url').prop('required', false);
+            $('#url').val('');
+        } else {
+            $('#url').prop('required', false);
         }
     });
 

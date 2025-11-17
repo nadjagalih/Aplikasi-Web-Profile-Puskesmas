@@ -46,48 +46,75 @@ class AdminMenuController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        // Get link_type to adjust validation
+        $linkType = $request->input('link_type', 'internal');
+        
+        // Base validation rules
+        $rules = [
             'title' => 'required|string|max:255',
-            'url' => 'nullable|string|max:255',
+            'slug' => 'required|string|max:255',
             'type' => 'required|in:parent_only,parent_with_sub',
             'target' => 'required|in:_self,_blank',
             'parent_id' => 'nullable|exists:menus,id',
             'icon' => 'nullable|string|max:100',
             'order' => 'required|integer|min:0',
             'position' => 'required|in:header,footer,sidebar',
+            'link_type' => 'nullable|in:internal,external',
             'is_active' => 'boolean'
-        ]);
+        ];
+        
+        // URL is required for external links
+        if ($linkType === 'external') {
+            $rules['url'] = 'required|string|max:255|url';
+        } else {
+            $rules['url'] = 'nullable|string|max:255';
+        }
+        
+        $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             return redirect()->back()
                 ->withErrors($validator)
-                ->withInput();
+                ->withInput()
+                ->with('error', 'Validasi gagal: ' . $validator->errors()->first());
         }
 
         $data = $request->all();
         $data['is_active'] = $request->has('is_active') ? true : false;
 
-        // Auto-create page if menu type is parent_only and has create_page checkbox
-        if ($request->has('create_page') && $request->type === 'parent_only') {
-            // Set URL to use the slug
+        // Handle based on link type
+        if ($linkType === 'external') {
+            // External link: use provided URL, no page creation
+            // URL already set from form input
+            // Remove create_page flag for external links
+            unset($data['create_page']);
+        } else {
+            // Internal link: auto-set URL from slug
             $data['url'] = '/' . $request->slug;
         }
 
-        $menu = Menu::create($data);
+        try {
+            $menu = Menu::create($data);
 
-        // Create associated page
-        if ($request->has('create_page') && $menu->type === 'parent_only') {
-            Page::create([
-                'menu_id' => $menu->id,
-                'title' => $menu->title,
-                'slug' => $menu->slug,
-                'content' => '<p>Konten untuk halaman ' . $menu->title . '</p>',
-                'is_active' => true
-            ]);
+            // Create associated page only for internal links
+            if ($linkType === 'internal' && $request->input('create_page') == '1' && $menu->type === 'parent_only') {
+                Page::create([
+                    'menu_id' => $menu->id,
+                    'title' => $menu->title,
+                    'slug' => $menu->slug,
+                    'content' => '<p>Konten untuk halaman ' . $menu->title . '</p>',
+                    'is_active' => true
+                ]);
+            }
+
+            return redirect()->route('menu.index')
+                ->with('success', 'Menu berhasil ditambahkan!');
+                
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Gagal menyimpan menu: ' . $e->getMessage());
         }
-
-        return redirect()->route('menu.index')
-            ->with('success', 'Menu berhasil ditambahkan!');
     }
 
     /**

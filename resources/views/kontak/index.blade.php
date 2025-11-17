@@ -79,7 +79,10 @@
           </div>
 
           <div class="col">
-            <a href="mailto:{{ $kontak->email }}" class="text-decoration-none text-dark h-100 d-block">
+            <a href="#" 
+               class="text-decoration-none text-dark h-100 d-block email-contact-link" 
+               data-email="{{ base64_encode($kontak->email) }}"
+               onclick="event.preventDefault(); window.location.href='mailto:'+atob(this.dataset.email);">
               <div class="card h-100 shadow text-center d-flex flex-column justify-content-center py-4">
                 <div class="card-body">
                   <img src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Gmail_Icon.png" alt="Gmail" width="60" class="mx-auto mb-3">

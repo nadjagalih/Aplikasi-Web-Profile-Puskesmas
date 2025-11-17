@@ -2,7 +2,10 @@
 
 @section('content')
 
+@if(config('app.env') !== 'production')
+<!-- Tailwind CDN for Development Only -->
 <script src="https://cdn.tailwindcss.com"></script>
+@endif
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 

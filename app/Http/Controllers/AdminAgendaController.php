@@ -23,15 +23,21 @@ class AdminAgendaController extends Controller
     {
         $validated = $request->validate([
             'judul' => 'required|string|max:255',
-            'deskripsi' => 'nullable|string',
+            'deskripsi' => 'required|string',
             'tempat' => 'nullable|string|max:255',
             'tanggal_mulai' => 'required|date',
             'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_mulai',
-            'warna' => 'required|string',
+            'warna' => 'nullable|string',
             'status' => 'required|in:Aktif,Selesai,Dibatalkan',
+        ], [
+            'judul.required' => 'Judul agenda wajib diisi!',
+            'deskripsi.required' => 'Deskripsi agenda wajib diisi!',
+            'tanggal_mulai.required' => 'Tanggal mulai wajib diisi!',
+            'status.required' => 'Status wajib dipilih!',
         ]);
 
         $validated['user_id'] = Auth::id();
+        $validated['warna'] = $request->warna ?? '#FFD700'; // Default kuning
 
         Agenda::create($validated);
 
@@ -47,14 +53,20 @@ class AdminAgendaController extends Controller
     {
         $validated = $request->validate([
             'judul' => 'required|string|max:255',
-            'deskripsi' => 'nullable|string',
+            'deskripsi' => 'required|string',
             'tempat' => 'nullable|string|max:255',
             'tanggal_mulai' => 'required|date',
             'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_mulai',
-            'warna' => 'required|string',
+            'warna' => 'nullable|string',
             'status' => 'required|in:Aktif,Selesai,Dibatalkan',
+        ], [
+            'judul.required' => 'Judul agenda wajib diisi!',
+            'deskripsi.required' => 'Deskripsi agenda wajib diisi!',
+            'tanggal_mulai.required' => 'Tanggal mulai wajib diisi!',
+            'status.required' => 'Status wajib dipilih!',
         ]);
 
+        $validated['warna'] = $request->warna ?? '#FFD700'; // Default kuning
         $agenda->update($validated);
 
         return redirect()->route('agenda.index')->with('success', 'Agenda berhasil diperbarui!');

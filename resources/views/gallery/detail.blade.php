@@ -67,7 +67,7 @@
 
 <section class="counts section-bg">
     <div class="section-title">
-        <h2>Detail Galeri Wisata</h2>
+        <h2>Detail Galeri</h2>
     </div>
     <div class="container text-center">
         <div class="row justify-content-center">

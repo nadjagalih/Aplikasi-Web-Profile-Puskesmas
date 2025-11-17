@@ -17,7 +17,7 @@
   <link rel="manifest" href="/assets/img/site.webmanifest?v=2">
 
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,600,600i,700,700i,900" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,600,600i,700,700i,900" rel="stylesheet" crossorigin="anonymous">
 
   <!-- Vendor CSS Files -->
   <link href="/assets/vendor/animate.css/animate.min.css" rel="stylesheet">
@@ -31,7 +31,8 @@
   <!-- Template Main CSS File -->
   <link href="/assets/css/style.css" rel="stylesheet">
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -60,9 +61,41 @@
   <!-- Template Main JS File -->
   <script src="/assets/js/main.js"></script>
 
-  <!-- Sweet Alert -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+  <!-- Sweet Alert 2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" crossorigin="anonymous"></script>
   @include('sweetalert::alert')
+  
+  <script>
+    // Delete confirmation with SweetAlert
+    document.addEventListener('DOMContentLoaded', function() {
+      const deleteForms = document.querySelectorAll('.swal-confirm');
+      
+      deleteForms.forEach(button => {
+        button.addEventListener('click', function(e) {
+          e.preventDefault();
+          const formId = this.getAttribute('data-form');
+          const form = document.getElementById(formId);
+          
+          if (form) {
+            Swal.fire({
+              title: 'Hapus Data Ini?',
+              text: "Anda tidak akan dapat mengembalikan data yang dihapus!",
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#d33',
+              cancelButtonColor: '#3085d6',
+              confirmButtonText: 'Ya, hapus!',
+              cancelButtonText: 'Batal'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                form.submit();
+              }
+            });
+          }
+        });
+      });
+    });
+  </script>
 
 </body>
 

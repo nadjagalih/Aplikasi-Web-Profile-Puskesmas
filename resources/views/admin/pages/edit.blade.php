@@ -1,6 +1,4 @@
-@extends('admin.layouts.app')
-
-@section('title', 'Edit Halaman')
+@extends('admin.layouts.main')
 
 @section('content')
 <div class="container-fluid">
@@ -40,7 +38,7 @@
                                 <div class="mb-3">
                                     <label for="content" class="form-label">Konten</label>
                                     <textarea class="form-control @error('content') is-invalid @enderror" 
-                                              id="content" 
+                                              id="editor_content" 
                                               name="content" 
                                               rows="15">{{ old('content', $page->content) }}</textarea>
                                     @error('content')
@@ -65,31 +63,6 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="meta_description" class="form-label">Meta Description</label>
-                                    <textarea class="form-control @error('meta_description') is-invalid @enderror" 
-                                              id="meta_description" 
-                                              name="meta_description" 
-                                              rows="3"
-                                              placeholder="Deskripsi singkat untuk SEO">{{ old('meta_description', $page->meta_description) }}</textarea>
-                                    @error('meta_description')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="meta_keywords" class="form-label">Meta Keywords</label>
-                                    <input type="text" 
-                                           class="form-control @error('meta_keywords') is-invalid @enderror" 
-                                           id="meta_keywords" 
-                                           name="meta_keywords" 
-                                           value="{{ old('meta_keywords', $page->meta_keywords) }}"
-                                           placeholder="keyword1, keyword2, keyword3">
-                                    @error('meta_keywords')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <div class="mb-3">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" 
                                                type="checkbox" 
@@ -108,7 +81,7 @@
                         <hr>
 
                         <div class="d-flex justify-content-between">
-                            <a href="{{ route('pages.index') }}" class="btn btn-secondary">
+                            <a href="{{ route('menu.index') }}" class="btn btn-secondary">
                                 <i class="ti ti-arrow-left"></i> Kembali
                             </a>
                             <button type="submit" class="btn btn-primary">
@@ -122,77 +95,129 @@
     </div>
 </div>
 
-@push('styles')
-<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
-<style>
-.note-editor.note-frame {
-    border: 1px solid #dee2e6;
-    border-radius: 0.25rem;
-}
-.note-editor .note-editable {
-    min-height: 400px;
-}
-</style>
-@endpush
-
-@push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+<!-- CKEditor 5 -->
+<script src="https://cdn.ckeditor.com/ckeditor5/39.0.0/classic/ckeditor.js"></script>
 <script>
-$(document).ready(function() {
-    // Initialize Summernote
-    $('#content').summernote({
-        height: 400,
-        toolbar: [
-            ['style', ['style']],
-            ['font', ['bold', 'italic', 'underline', 'clear']],
-            ['fontname', ['fontname']],
-            ['fontsize', ['fontsize']],
-            ['color', ['color']],
-            ['para', ['ul', 'ol', 'paragraph']],
-            ['height', ['height']],
-            ['table', ['table']],
-            ['insert', ['link', 'picture', 'video']],
-            ['view', ['fullscreen', 'codeview', 'help']]
-        ],
-        callbacks: {
-            onImageUpload: function(files) {
-                uploadImage(files[0]);
+    // Simple Upload Adapter untuk handle upload gambar
+    class MyUploadAdapter {
+        constructor(loader) {
+            this.loader = loader;
+        }
+
+        upload() {
+            return this.loader.file
+                .then(file => new Promise((resolve, reject) => {
+                    const data = new FormData();
+                    data.append('upload', file);
+
+                    fetch('/admin/pages/upload-image', {
+                        method: 'POST',
+                        body: data,
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.url) {
+                            resolve({
+                                default: result.url
+                            });
+                        } else {
+                            reject(result.error || 'Upload failed');
+                        }
+                    })
+                    .catch(error => {
+                        reject('Upload failed: ' + error);
+                    });
+                }));
+        }
+
+        abort() {
+            // Handle abort jika diperlukan
+        }
+    }
+
+    function MyCustomUploadAdapterPlugin(editor) {
+        editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+            return new MyUploadAdapter(loader);
+        };
+    }
+
+    let editorContent;
+    
+    // Tunggu DOM ready
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM Ready - Initializing CKEditor...');
+        
+        // Editor untuk Konten dengan upload adapter
+        ClassicEditor
+            .create(document.querySelector('#editor_content'), {
+                extraPlugins: [MyCustomUploadAdapterPlugin],
+                toolbar: [
+                    'heading', '|',
+                    'bold', 'italic', 'link', '|',
+                    'bulletedList', 'numberedList', '|',
+                    'insertTable', 'blockQuote', '|',
+                    'imageUpload', 'mediaEmbed', '|',
+                    'undo', 'redo'
+                ],
+                heading: {
+                    options: [
+                        { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+                        { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
+                        { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
+                        { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' }
+                    ]
+                },
+                image: {
+                    toolbar: [
+                        'imageTextAlternative', '|',
+                        'imageStyle:inline', 'imageStyle:block', 'imageStyle:side'
+                    ],
+                    upload: {
+                        types: ['jpeg', 'png', 'gif', 'bmp', 'webp', 'jpg']
+                    }
+                },
+                table: {
+                    contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
+                }
+            })
+            .then(editor => {
+                console.log('Content editor initialized with upload adapter');
+                editorContent = editor;
+                attachFormSubmitHandler();
+            })
+            .catch(error => {
+                console.error('Error initializing content editor:', error);
+            });
+        
+        function attachFormSubmitHandler() {
+            const form = document.querySelector('form');
+            if (!form) {
+                console.error('Form not found!');
+                return;
             }
+            
+            console.log('Attaching submit handler to form...');
+            form.addEventListener('submit', function(e) {
+                console.log('Form submit triggered!');
+                
+                try {
+                    // Update textarea dengan data dari CKEditor
+                    if (editorContent) {
+                        const contentData = editorContent.getData();
+                        document.querySelector('#editor_content').value = contentData;
+                        console.log('Content updated');
+                    }
+                    console.log('Form will now submit...');
+                } catch (error) {
+                    console.error('Error updating textarea:', error);
+                }
+            });
+            
+            console.log('Submit handler attached successfully');
         }
     });
-
-    // Function to upload image
-    function uploadImage(file) {
-        let data = new FormData();
-        data.append('upload', file);
-        
-        $.ajax({
-            url: '/admin/pages/upload-image',
-            method: 'POST',
-            data: data,
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            processData: false,
-            contentType: false,
-            success: function(response) {
-                if(response.url) {
-                    $('#content').summernote('insertImage', response.url);
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error('Upload error:', xhr.responseJSON);
-                let errorMsg = 'Gagal upload gambar!';
-                if (xhr.responseJSON && xhr.responseJSON.error) {
-                    errorMsg += ' Error: ' + xhr.responseJSON.error;
-                } else if (xhr.responseJSON && xhr.responseJSON.message) {
-                    errorMsg += ' Error: ' + xhr.responseJSON.message;
-                }
-                alert(errorMsg);
-            }
-        });
-    }
-});
 </script>
-@endpush
 @endsection

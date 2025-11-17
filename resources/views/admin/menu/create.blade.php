@@ -173,6 +173,34 @@
 @push('scripts')
 <script>
 $(document).ready(function() {
+    // Session messages with SweetAlert
+    var successMessage = {!! json_encode(session('success')) !!};
+    var errorMessage = {!! json_encode(session('error')) !!};
+
+    if(successMessage) {
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: successMessage,
+            timer: 3000,
+            showConfirmButton: false,
+            position: 'top-end',
+            toast: true
+        });
+    }
+
+    if(errorMessage) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: errorMessage,
+            timer: 3000,
+            showConfirmButton: false,
+            position: 'top-end',
+            toast: true
+        });
+    }
+
     // Auto generate slug from title
     $('#title').on('keyup', function() {
         const title = $(this).val();
@@ -182,6 +210,9 @@ $(document).ready(function() {
             data: { title: title },
             success: function(response) {
                 $('#slug').val(response.slug);
+            },
+            error: function() {
+                console.error('Gagal generate slug');
             }
         });
     });

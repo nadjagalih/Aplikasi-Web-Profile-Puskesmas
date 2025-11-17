@@ -1,5 +1,7 @@
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" crossorigin="anonymous">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" 
+      integrity="sha384-XGjxtQfXaH2tnPFa9x+ruJTuLE3Aa6LhHSWRr1XeTyhezb4abCG4ccI5AkVDxqC+" 
+      crossorigin="anonymous">
 
 <style>
     /* Base styles for desktop */
@@ -547,9 +549,12 @@
                                     @php
                                         $childUrl = ltrim($child->full_url, '/');
                                         $childActive = ($currentPath === $childUrl || Request::is($childUrl)) ? 'active' : '';
+                                        // Check if external link (starts with http:// or https://)
+                                        $isExternal = preg_match('/^https?:\/\//', $child->url);
+                                        $childHref = $isExternal ? $child->url : url($child->full_url);
                                     @endphp
                                     <li>
-                                        <a href="{{ url($child->full_url) }}" 
+                                        <a href="{{ $childHref }}" 
                                            class="{{ $childActive }}" 
                                            target="{{ $child->target }}">
                                             @if($child->icon)
@@ -563,9 +568,14 @@
                         </li>
                     @else
                         {{-- Single Menu Item --}}
+                        @php
+                            // Check if external link
+                            $isMenuExternal = preg_match('/^https?:\/\//', $menu->url);
+                            $menuHref = $isMenuExternal ? $menu->url : url($menu->full_url);
+                        @endphp
                         <li>
                             <a class="nav-link scrollto {{ $isActive }}" 
-                               href="{{ url($menu->full_url) }}" 
+                               href="{{ $menuHref }}" 
                                target="{{ $menu->target }}">
                                 <span>
                                     @if($menu->icon)
