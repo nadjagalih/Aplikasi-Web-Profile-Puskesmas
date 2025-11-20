@@ -24,11 +24,11 @@
 
             <!-- Nav tabs -->
             <ul class="nav nav-tabs" id="myTabs" role="tablist">
-                <li class="nav-item">
-                    <a class="nav-link active" id="publish-tab" data-toggle="tab" href="#publish" role="tab" aria-controls="publish" aria-selected="true">Publish</a>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="publish-tab" data-bs-toggle="tab" data-bs-target="#publish" type="button" role="tab" aria-controls="publish" aria-selected="true">Publish</button>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="draft-tab" data-toggle="tab" href="#draft" role="tab" aria-controls="draft" aria-selected="false">Draft</a>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="draft-tab" data-bs-toggle="tab" data-bs-target="#draft" type="button" role="tab" aria-controls="draft" aria-selected="false">Draft</button>
                 </li>
             </ul>
 
@@ -133,15 +133,6 @@
     $(document).ready( function () {
         $('#table_id').DataTable();
         $('#table_draft').DataTable();
-    });
-</script>
-
-<script>
-    $(document).ready( function () {
-        $('#myTabs a').on('click', function (e) {
-            e.preventDefault();
-            $(this).tab('show');
-        });
     });
 </script>
 @endsection

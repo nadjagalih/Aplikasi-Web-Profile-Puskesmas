@@ -728,7 +728,7 @@
             <h3 class="sambutan-title">{{ $sambutan->nama }}</h3>
             <p class="sambutan-position">{{ $sambutan->jabatan }}</p>
             <div class="sambutan-text">
-              {!! nl2br(e($sambutan->isi_sambutan)) !!}
+              {!! $sambutan->isi_sambutan !!}
             </div>
           </div>
         </div>

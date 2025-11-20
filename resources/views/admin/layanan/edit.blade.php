@@ -65,7 +65,7 @@
                                 </div>
                             @endif
                             <input type="file" class="form-control @error('gambar') is-invalid @enderror" 
-                                name="gambar" id="gambar" accept="image/*" required>
+                                name="gambar" id="gambar" accept="image/*">
                             <small class="text-muted">Format: JPG, PNG, JPEG. Maksimal 2MB. Kosongkan jika tidak ingin mengubah gambar.</small>
                             @error('gambar')
                                 <div class="text-danger">{{ $message }}</div>
