@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AlurPelayanan;
 use Illuminate\Http\Request;
+use App\Helpers\HtmlSanitizer;
 
 class AdminAlurPelayananController extends Controller
 {
@@ -53,12 +54,12 @@ class AdminAlurPelayananController extends Controller
                     
                     $alurPelayanan->update([
                         'gambar' => 'alur-pelayanan/' . $gambarName,
-                        'deskripsi' => $request->deskripsi
+                        'deskripsi' => HtmlSanitizer::sanitize($request->deskripsi)
                     ]);
                 } else {
                     // Update deskripsi saja
                     $alurPelayanan->update([
-                        'deskripsi' => $request->deskripsi
+                        'deskripsi' => HtmlSanitizer::sanitize($request->deskripsi)
                     ]);
                 }
             } else {
@@ -71,7 +72,7 @@ class AdminAlurPelayananController extends Controller
                     AlurPelayanan::create([
                         'gambar' => 'alur-pelayanan/' . $gambarName,
                         'judul' => 'Alur Pelayanan Puskesmas',
-                        'deskripsi' => $request->deskripsi,
+                        'deskripsi' => HtmlSanitizer::sanitize($request->deskripsi),
                         'urutan' => 1,
                         'status' => 'Aktif'
                     ]);

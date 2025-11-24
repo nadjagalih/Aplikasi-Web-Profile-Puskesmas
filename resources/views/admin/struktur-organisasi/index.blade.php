@@ -70,7 +70,7 @@
                          class="btn btn-sm btn-warning">
                         <i class="ti ti-edit"></i> Edit
                       </a>
-                      <form id="{{ $kepalaPuskesmas->id }}" 
+                      <form id="delete-form-{{ $kepalaPuskesmas->id }}" 
                             action="/admin/struktur-organisasi/{{ $kepalaPuskesmas->id }}" 
                             method="POST" 
                             class="d-inline">
@@ -78,7 +78,7 @@
                         @csrf
                         <button type="button" 
                                 class="btn btn-sm btn-danger swal-confirm" 
-                                data-form="{{ $kepalaPuskesmas->id }}">
+                                data-form="delete-form-{{ $kepalaPuskesmas->id }}">
                           <i class="ti ti-trash"></i> Hapus
                         </button>
                       </form>
@@ -122,7 +122,7 @@
                          class="btn btn-sm btn-warning">
                         <i class="ti ti-edit"></i> Edit
                       </a>
-                      <form id="{{ $perangkat->id }}" 
+                      <form id="delete-form-{{ $perangkat->id }}" 
                             action="/admin/struktur-organisasi/{{ $perangkat->id }}" 
                             method="POST" 
                             class="d-inline">
@@ -130,7 +130,7 @@
                         @csrf
                         <button type="button" 
                                 class="btn btn-sm btn-danger swal-confirm" 
-                                data-form="{{ $perangkat->id }}">
+                                data-form="delete-form-{{ $perangkat->id }}">
                           <i class="ti ti-trash"></i> Hapus
                         </button>
                       </form>

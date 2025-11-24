@@ -200,8 +200,7 @@
                                                                 data-menu-title="{{ $menu->title }}"
                                                                 data-menu-slug="{{ $menu->slug }}"
                                                                 data-bs-toggle="tooltip"
-                                                                title="Buat Halaman"
-                                                                onclick="createPageFromMenu({{ $menu->id }}, '{{ addslashes($menu->title) }}', '{{ $menu->slug }}', this)">
+                                                                title="Buat Halaman">
                                                             <i class="ti ti-file-plus"></i>
                                                         </button>
                                                     @endif
@@ -295,8 +294,7 @@
                                                                     data-menu-title="{{ $child->title }}"
                                                                     data-menu-slug="{{ $child->slug }}"
                                                                     data-bs-toggle="tooltip"
-                                                                    title="Buat Halaman"
-                                                                    onclick="createPageFromMenu({{ $child->id }}, '{{ addslashes($child->title) }}', '{{ $child->slug }}', this)">
+                                                                    title="Buat Halaman">
                                                                 <i class="ti ti-file-plus"></i>
                                                             </button>
                                                         @endif
@@ -606,6 +604,15 @@
 @endpush
 
 @push('scripts')
+@if(session('success') || session('error'))
+<script id="session-data" type="application/json">
+{
+    "success": {{ Js::from(session('success')) }},
+    "error": {{ Js::from(session('error')) }}
+}
+</script>
+@endif
+
 <script>
 // Global function untuk create page (dipanggil dari onclick)
 function createPageFromMenu(menuId, menuTitle, menuSlug, button) {
@@ -672,8 +679,15 @@ $(document).ready(function() {
     });
 
     // Session messages
-    var successMessage = {!! json_encode(session('success')) !!};
-    var errorMessage = {!! json_encode(session('error')) !!};
+    var sessionData = document.getElementById('session-data');
+    var successMessage = null;
+    var errorMessage = null;
+    
+    if (sessionData) {
+        var data = JSON.parse(sessionData.textContent);
+        successMessage = data.success;
+        errorMessage = data.error;
+    }
 
     // Show SweetAlert for success message
     if(successMessage) {
@@ -818,6 +832,16 @@ $(document).ready(function() {
 
     // Trigger change on page load to set initial state
     $('#submenu_link_type').trigger('change');
+
+    // Handle Create Page From Menu button
+    $(document).on('click', '.create-page-btn', function() {
+        const menuId = $(this).data('menu-id');
+        const menuTitle = $(this).data('menu-title');
+        const menuSlug = $(this).data('menu-slug');
+        const button = $(this);
+        
+        createPageFromMenu(menuId, menuTitle, menuSlug, button[0]);
+    });
 
     // Toggle Submenu Visibility
     $('.toggle-submenu').on('click', function() {

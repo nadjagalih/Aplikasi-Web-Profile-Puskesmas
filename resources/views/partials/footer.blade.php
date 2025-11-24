@@ -70,6 +70,10 @@
     text-align: center !important;
     font-size: 14px !important;
   }
+
+  #footer .footer-links a img:hover {
+    transform: scale(1.1);
+  }
 </style>
 
 <!-- ======= Footer ======= -->
@@ -82,21 +86,47 @@
           <img src="{{ asset('storage/' . $logo->logo) }}" class="mb-2" alt="Logo" width="250">
           <h3>{{ $nm_puskesmas }}</h3>
           <p>
-            Kecamatan {{ $kecamatan }}, Kabupaten {{ $kabupaten }}, <br> Provinsi {{ $provinsi }}, Kode Pos {{ $kode_pos }}<br><br>
+            Kecamatan {{ $kecamatan }}, Kabupaten {{ $kabupaten }}, <br> Provinsi {{ $provinsi }}, Kode Pos {{ $kode_pos }}<br>
             <strong>Nomor HP :</strong> {{ $no_hp }}<br>
             <strong>Email :</strong> {{ $email }}<br>
           </p>
+          
+          <!-- Map Section -->
+          <div class="mt-3">
+            @if($kontak->map_url)
+            <iframe
+              width="100%"
+              height="200"
+              frameborder="0"
+              style="border:0; border-radius: 8px;"
+              allowfullscreen=""
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              src="{{ $kontak->map_url }}">
+            </iframe>
+            @else
+            <iframe
+              width="100%"
+              height="200"
+              frameborder="0"
+              style="border:0; border-radius: 8px;"
+              allowfullscreen=""
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d252760.86139202642!2d111.47004833973135!3d-8.163560447044588!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e791ad33bad6389%3A0x19f173f90f85d9be!2sTrenggalek%2C%20Kabupaten%20Trenggalek%2C%20Jawa%20Timur!5e0!3m2!1sid!2sid!4v1762759569624!5m2!1sid!2sid">
+            </iframe>
+            @endif
+          </div>
         </div>
 
         <div class="col-lg-2 col-md-6 footer-links">
           <h4>Menu Utama</h4>
           <ul>
             <li><i class="bx bx-chevron-right"></i> <a href="/">Beranda</a></li>
-            <li><i class="bx bx-chevron-right"></i> <a href="/kontak">Kontak</a></li>
           </ul>
         </div>
 
-        <div class="col-lg-3 col-md-6 footer-links">
+        <div class="col-lg-2 col-md-6 footer-links">
           <h4>Informasi</h4>
           <ul>
             <li><i class="bx bx-chevron-right"></i> <a href="/berita">Berita</a></li>
@@ -107,7 +137,7 @@
           </ul>
         </div>
 
-        <div class="col-lg-3 col-md-6 footer-links">
+        <div class="col-lg-2 col-md-6 footer-links">
           <h4>Profil & Layanan</h4>
           <ul>
             <li><i class="bx bx-chevron-right"></i> <a href="/sambutan">Sambutan</a></li>
@@ -118,6 +148,24 @@
           </ul>
         </div>
 
+        <div class="col-lg-2 col-md-6 footer-links">
+          <h4>Hubungi Kami</h4>
+          <div class="d-flex gap-3 mt-3">
+            <a href="https://wa.me/62{{ $kontak->no_hp }}" target="_blank" class="text-decoration-none" title="WhatsApp">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" width="40" height="40" style="transition: transform 0.3s;">
+            </a>
+            <a href="#" 
+               class="text-decoration-none email-contact-link" 
+               data-email="{{ base64_encode($kontak->email) }}"
+               onclick="event.preventDefault(); window.location.href='mailto:'+atob(this.dataset.email);"
+               title="Gmail">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Gmail_Icon.png" alt="Gmail" width="40" height="40" style="transition: transform 0.3s;">
+            </a>
+            <a href="{{ $kontak->instagram_url }}" target="_blank" class="text-decoration-none" title="Instagram">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" width="40" height="40" style="transition: transform 0.3s;">
+            </a>
+          </div>
+        </div>
 
       </div>
     </div>
@@ -125,8 +173,7 @@
 
   <div class="container">
     <div class="copyright">
-      <strong>2025 &copy;</strong> Dinas Komunikasi dan Informatika Kab. Trenggalek &nbsp;
-      |&nbsp; Created by: Interns from Brawijaya University and State University of Surabaya</a>
+      <strong>2025 &copy;</strong> Dinas Komunikasi dan Informatika Kab. Trenggalek</a>
     </div>
   </div>
 </footer><!-- End Footer -->

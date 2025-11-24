@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Models\User;
-use App\Models\Comment;
 use App\Models\Kategori;
 use App\Models\PostStatus;
 use Illuminate\Database\Eloquent\Model;
@@ -39,10 +38,5 @@ class Berita extends Model
     public function kategori()
     {
         return $this->belongsTo(Kategori::class);
-    }
-
-    public function comments()
-    {
-        return $this->hasMany(Comment::class);
     }
 }

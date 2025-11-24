@@ -7,8 +7,6 @@
 <script src="https://cdn.tailwindcss.com"></script>
 @endif
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
-
   :root {
     --primary-color: #007bff;
     --primary-dark: #0056b3;
@@ -759,10 +757,6 @@
               <i class="bi bi-calendar3"></i>
               <span>{{ $berita->created_at->format('d M Y H:i:s') }}</span>
             </div>
-            <div class="meta-item">
-              <i class="bi bi-chat-dots"></i>
-              <span>{{ $berita->comments_count ?? 0 }} Comments</span>
-            </div>
           </div>
           <div class="berita-content">
             <h5 class="berita-title">
@@ -1330,10 +1324,10 @@
     
     const descEl = document.getElementById('fasilitasDesc');
     if (descEl) {
-      // Decode HTML entities and display as HTML
+      // Use textContent instead of innerHTML to prevent XSS
       const textarea = document.createElement('textarea');
       textarea.innerHTML = desc;
-      descEl.innerHTML = textarea.value;
+      descEl.textContent = textarea.value;
     }
     
     // Update biaya
@@ -1352,7 +1346,8 @@
     if (persyaratanEl && persyaratan) {
       const textarea2 = document.createElement('textarea');
       textarea2.innerHTML = persyaratan;
-      persyaratanEl.innerHTML = textarea2.value;
+      // Use textContent instead of innerHTML to prevent XSS
+      persyaratanEl.textContent = textarea2.value;
       if (persyaratanContainer) persyaratanContainer.style.display = 'block';
     } else if (persyaratanContainer) {
       persyaratanContainer.style.display = 'none';

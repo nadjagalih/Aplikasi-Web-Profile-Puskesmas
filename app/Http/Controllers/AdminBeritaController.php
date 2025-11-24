@@ -11,6 +11,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Cviebrock\EloquentSluggable\Services\SlugService;
+use App\Helpers\HtmlSanitizer;
 
 class AdminBeritaController extends Controller
 {
@@ -83,7 +84,7 @@ class AdminBeritaController extends Controller
         $berita = Berita::create([
             'judul'         =>  $request->judul,
             'slug'          =>  $request->slug,
-            'body'          =>  $request->body,
+            'body'          =>  HtmlSanitizer::sanitize($request->body),
             'gambar'        =>  $gambar,
             'excerpt'       =>  Str::limit(strip_tags($request->body), 100),
             'user_id'       =>  Auth::id(),
@@ -174,7 +175,7 @@ class AdminBeritaController extends Controller
         $berita->update([
             'judul'         => $request->judul,
             'slug'          => $request->slug,
-            'body'          => $request->body,
+            'body'          => HtmlSanitizer::sanitize($request->body),
             'gambar'        => $gambar,
             'excerpt'       => Str::limit(strip_tags($request->body), 100),
             'user_id'       => Auth::id(),

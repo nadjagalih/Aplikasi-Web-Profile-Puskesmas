@@ -6,7 +6,6 @@ use App\Models\Berita;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
-use App\Models\Comment;
 
 
 class HomeController extends Controller
@@ -34,13 +33,11 @@ class HomeController extends Controller
 
         $totalBerita    = Berita::count();
         $beritas        = Berita::orderBy('created_at', 'DESC')->take(10)->get();
-        $komentars      = Comment::orderBy('created_at', 'DESC')->take(10)->get();
 
         return view('admin.dashboard', [
             'totalBerita'    => $totalBerita,
             'viewsToday'     => $viewsToday,
-            'beritas'        => $beritas,
-            'komentars'      => $komentars
+            'beritas'        => $beritas
         ]);
     }
 }

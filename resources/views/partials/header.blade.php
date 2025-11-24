@@ -1,7 +1,5 @@
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" crossorigin="anonymous">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" 
-      integrity="sha384-XGjxtQfXaH2tnPFa9x+ruJTuLE3Aa6LhHSWRr1XeTyhezb4abCG4ccI5AkVDxqC+" 
-      crossorigin="anonymous">
+<link href="/vendor/fonts/fonts.css" rel="stylesheet">
+<link href="/vendor/bootstrap-icons/bootstrap-icons.min.css" rel="stylesheet">
 
 <style>
     /* Base styles for desktop */
@@ -578,14 +576,6 @@
                         </li>
                     @endif
                 @endforeach
-
-                {{-- Menu Statis Kontak --}}
-                <li>
-                    <a class="nav-link scrollto {{ $currentPath === 'kontak' ? 'active' : '' }}" 
-                       href="/kontak">
-                        <span>Kontak</span>
-                    </a>
-                </li>
 
                 <!-- Desktop Login SKM Button -->
                 @php

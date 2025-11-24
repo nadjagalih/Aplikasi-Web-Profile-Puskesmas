@@ -39,6 +39,7 @@ class LogoSite
         View::share('provinsi', $provinsi);
         View::share('kode_pos', $kode_pos);
 
+        View::share('kontak', $kontak);
         View::share('no_hp', $no_hp);
         View::share('email', $email);
 

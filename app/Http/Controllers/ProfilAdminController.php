@@ -22,21 +22,33 @@ class ProfilAdminController extends Controller
     public function update(Request $request, $id)
     {
         $user = User::find($id);
+        
+        // Validasi umum
         $validator = Validator::make($request->all(), [
             'name'       => 'required',
             'username'   => 'required|unique:users,username,' . $id,
             'email'      => 'required|email:rfc,dns',
+            'foto'       => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ], [
             'name.required'      => 'Wajib menambahkan nama anda !',
             'username.required'  => 'Wajib menambahkan username !',
             'username.unique'    => 'Username sudah digunakan !',
-            'email.required'     => 'Wajib menambahkan email untu login !',
-            'email.email'        => 'Gunakan email yang sah !'
+            'email.required'     => 'Wajib menambahkan email untuk login !',
+            'email.email'        => 'Gunakan email yang sah !',
+            'foto.image'         => 'File harus berupa gambar !',
+            'foto.mimes'         => 'Format gambar harus jpeg, png, jpg, atau gif !',
+            'foto.max'           => 'Ukuran gambar maksimal 2MB !',
         ]);
 
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+
+        // Handle upload foto
         if($request->hasFile('foto')){
-            if($user->foto){
-                unlink('.' .Storage::url($user->foto));
+            // Hapus foto lama jika ada
+            if($user->foto && Storage::disk('public')->exists($user->foto)){
+                Storage::disk('public')->delete($user->foto);
             }
             $path       = 'img-profil/';
             $file       = $request->file('foto');
@@ -44,19 +56,8 @@ class ProfilAdminController extends Controller
             $fileName   = uniqid() . '.' . $extension; 
             $foto       = $file->storeAs($path, $fileName, 'public');
         } else {
-            $validator = Validator::make($request->all(), [
-                'name'       => 'required',
-                'email'      => 'required|email:rfc,dns',
-            ], [
-                'name.required'  => 'Wajib menambahkan nama anda !',
-                'email.required' => 'Wajib menambahkan email untu login !',
-                'email.email'    => 'Gunakan email yang sah !'
-            ]);
+            // Jika tidak upload foto baru, pakai foto lama
             $foto = $user->foto;
-        }
-
-        if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
         }
 
         $user->update([

@@ -6,7 +6,6 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\KontakController;
 use App\Http\Controllers\BerandaController;
-use App\Http\Controllers\CommentController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\LayananController;
 use App\Http\Controllers\ProfilController;
@@ -25,7 +24,6 @@ use App\Http\Controllers\ProfilAdminController;
 use App\Http\Controllers\AdminSliderController;
 use App\Http\Controllers\AdminBeritaController;
 use App\Http\Controllers\AdminKontakController;
-use App\Http\Controllers\AdminCommentController;
 use App\Http\Controllers\AdminGalleryController;
 use App\Http\Controllers\AdminLayananController;
 use App\Http\Controllers\AdminProfilPkmController;
@@ -59,9 +57,6 @@ Route::get('/', [BerandaController::class, 'index']);
 
 Route::get('/berita/{beritas:slug}', [BeritaController::class, 'berita']);
 Route::get('/berita', [BeritaController::class, 'index']);
-
-Route::post('/berita/{slug}', [CommentController::class, 'comment']);
-Route::post('/berita/{slug}/reply', [CommentController::class, 'commentReply']);
 
 Route::get('/kategori/{kategori:slug}', [KategoriController::class, 'index']);
 
@@ -104,9 +99,6 @@ Route::resource('/admin/slider', AdminSliderController::class);
 
 Route::get('/admin/berita/slug', [AdminBeritaController::class, 'slug']);
 Route::resource('/admin/berita', AdminBeritaController::class);
-
-Route::get('/admin/komentar', [AdminCommentController::class, 'index']);
-Route::delete('/admin/komentar/{id}', [AdminCommentController::class, 'destroy']);
 
 Route::get('/admin/kategori/slug', [AdminKategoriController::class, 'slug']);
 route::resource('/admin/kategori', AdminKategoriController::class);

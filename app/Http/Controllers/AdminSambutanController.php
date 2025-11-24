@@ -7,6 +7,7 @@ use App\Models\Sambutan;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\HtmlSanitizer;
 
 class AdminSambutanController extends Controller
 {
@@ -76,7 +77,7 @@ class AdminSambutanController extends Controller
         $sambutan->update([
             'jabatan' => $request->jabatan,
             'nama' => $request->nama,
-            'isi_sambutan' => $request->isi_sambutan,
+            'isi_sambutan' => HtmlSanitizer::sanitize($request->isi_sambutan),
             'foto' => $fotoPath,
             'tempat' => $request->tempat,
             'tanggal' => $request->tanggal,

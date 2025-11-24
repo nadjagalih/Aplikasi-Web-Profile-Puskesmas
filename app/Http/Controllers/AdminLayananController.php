@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use App\Helpers\HtmlSanitizer;
 
 class AdminLayananController extends Controller
 {
@@ -56,8 +57,8 @@ class AdminLayananController extends Controller
         $data = [
             'nama_layanan'  => $request->nama_layanan,
             'slug'          => Str::slug($request->nama_layanan),
-            'deskripsi'     => $request->deskripsi,
-            'persyaratan'   => $request->persyaratan,
+            'deskripsi'     => HtmlSanitizer::sanitize($request->deskripsi),
+            'persyaratan'   => HtmlSanitizer::sanitize($request->persyaratan),
             'biaya'         => $request->biaya,
             'status'        => $request->status
         ];
@@ -118,8 +119,8 @@ class AdminLayananController extends Controller
         $data = [
             'nama_layanan'  => $request->nama_layanan,
             'slug'          => Str::slug($request->nama_layanan),
-            'deskripsi'     => $request->deskripsi,
-            'persyaratan'   => $request->persyaratan,
+            'deskripsi'     => HtmlSanitizer::sanitize($request->deskripsi),
+            'persyaratan'   => HtmlSanitizer::sanitize($request->persyaratan),
             'biaya'         => $request->biaya,
             'status'        => $request->status
         ];

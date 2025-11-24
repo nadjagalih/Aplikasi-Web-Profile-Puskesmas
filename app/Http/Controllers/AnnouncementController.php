@@ -20,6 +20,12 @@ class AnnouncementController extends Controller
         $pengumuman = Announcement::where('slug', $slug)->with('user')
             ->orderBy('id', 'DESC')
             ->first();
+        
+        // Null check to prevent error exposure
+        if (!$pengumuman) {
+            abort(404);
+        }
+        
         $pengumuman->views += 1;
         $pengumuman->save();
 

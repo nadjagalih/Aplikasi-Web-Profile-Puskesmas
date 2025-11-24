@@ -18,7 +18,13 @@ class BeritaController extends Controller
 
     public function berita($slug)
     {
-        $berita = Berita::where('slug', $slug)->with(['user', 'status', 'kategori', 'comments'])->first();
+        $berita = Berita::where('slug', $slug)->with(['user', 'status', 'kategori'])->first();
+        
+        // Null check to prevent error exposure
+        if (!$berita) {
+            abort(404);
+        }
+        
         $berita->views += 1;
         $berita->save();
 

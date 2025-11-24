@@ -44,12 +44,12 @@
                                     <td>
                                         <a href="/admin/gallery/{{ $gallery->id }}/edit" type="button"
                                             class="btn btn-warning mb-1"><i class="ti ti-edit"></i></a>
-                                        <form id="{{ $gallery->id }}" action="/admin/gallery/{{ $gallery->id }}"
+                                        <form id="delete-form-{{ $gallery->id }}" action="/admin/gallery/{{ $gallery->id }}"
                                             method="POST" class="d-inline">
                                             @method('delete')
                                             @csrf
                                             <button type="button" class="btn btn-danger swal-confirm mb-1"
-                                                data-form="{{ $gallery->id }}"><i class="ti ti-trash"></i></button>
+                                                data-form="delete-form-{{ $gallery->id }}"><i class="ti ti-trash"></i></button>
                                         </form>
                                     </td>
                                 </tr>

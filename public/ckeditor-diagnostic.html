@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CKEditor Diagnostic Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        #editor {
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 CKEditor Diagnostic Test</h1>
+    
+    <div id="status-container"></div>
+    
+    <h2>Editor Test:</h2>
+    <textarea id="editor">
+        <p>Hello from CKEditor 5!</p>
+        <p>This is a <strong>test</strong> content.</p>
+    </textarea>
+
+    <!-- CKEditor 5 Script -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.2/classic/ckeditor.js" 
+            crossorigin="anonymous"></script>
+
+    <script>
+        const statusContainer = document.getElementById('status-container');
+        
+        function addStatus(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.innerHTML = `<strong>${type.toUpperCase()}:</strong> ${message}`;
+            statusContainer.appendChild(div);
+            console.log(`[${type}] ${message}`);
+        }
+
+        // Check 1: Script loaded
+        addStatus('Starting CKEditor diagnostic...', 'info');
+        
+        // Check 2: ClassicEditor available
+        if (typeof ClassicEditor !== 'undefined') {
+            addStatus('✅ ClassicEditor object is available!', 'success');
+            addStatus(`CKEditor version: ${ClassicEditor.version || 'Unknown'}`, 'info');
+        } else {
+            addStatus('❌ ClassicEditor is NOT defined! Script failed to load.', 'error');
+            addStatus('Possible causes: CSP blocking, SRI hash mismatch, network error', 'error');
+        }
+
+        // Check 3: Try to initialize
+        if (typeof ClassicEditor !== 'undefined') {
+            addStatus('Attempting to initialize CKEditor...', 'info');
+            
+            ClassicEditor
+                .create(document.querySelector('#editor'), {
+                    toolbar: [
+                        'heading', '|',
+                        'bold', 'italic', 'link', '|',
+                        'bulletedList', 'numberedList', '|',
+                        'undo', 'redo'
+                    ]
+                })
+                .then(editor => {
+                    addStatus('✅ CKEditor initialized successfully!', 'success');
+                    addStatus(`Editor instance created: ${editor.constructor.name}`, 'success');
+                    
+                    // Test setting content
+                    editor.setData('<p>Editor is <strong>working</strong>! 🎉</p>');
+                    addStatus('✅ Content set successfully!', 'success');
+                })
+                .catch(error => {
+                    addStatus('❌ CKEditor initialization FAILED!', 'error');
+                    addStatus(`Error: ${error.message}`, 'error');
+                    console.error('Detailed error:', error);
+                });
+        } else {
+            addStatus('⚠️ Skipping initialization (ClassicEditor not available)', 'error');
+        }
+
+        // Check 4: Network check
+        addStatus('Checking CDN connectivity...', 'info');
+        fetch('https://cdn.ckeditor.com/ckeditor5/39.0.2/classic/ckeditor.js', { method: 'HEAD' })
+            .then(response => {
+                if (response.ok) {
+                    addStatus(`✅ CDN reachable (Status: ${response.status})`, 'success');
+                } else {
+                    addStatus(`⚠️ CDN returned status: ${response.status}`, 'error');
+                }
+            })
+            .catch(error => {
+                addStatus(`❌ CDN connection failed: ${error.message}`, 'error');
+            });
+
+        // Check 5: CSP violations
+        document.addEventListener('securitypolicyviolation', (e) => {
+            addStatus(`🚨 CSP VIOLATION: ${e.violatedDirective} - ${e.blockedURI}`, 'error');
+            console.error('CSP Violation:', e);
+        });
+
+        addStatus('Diagnostic test running... Check console for detailed logs.', 'info');
+    </script>
+</body>
+</html>
