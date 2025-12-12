@@ -285,24 +285,21 @@ function renderCalendar() {
   // Current month days
   const today = new Date();
   for (let i = 1; i <= lastDay.getDate(); i++) {
-    const currentDate = new Date(currentYear, currentMonth, i);
-    const dateStr = currentDate.toISOString().split('T')[0];
-    
-    // Check if this date has events
+    // Check if this date has events using local year/month/day to avoid timezone shifts
     const hasEvent = agendaData.some(event => {
-      const eventDate = new Date(event.start).toISOString().split('T')[0];
-      return eventDate === dateStr;
+      const ev = new Date(event.start);
+      return ev.getFullYear() === currentYear && ev.getMonth() === currentMonth && ev.getDate() === i;
     });
-    
+
     const isToday = today.getDate() === i && 
                     today.getMonth() === currentMonth && 
                     today.getFullYear() === currentYear;
-    
+
     let classes = '';
     if (isToday) classes += 'today ';
     if (hasEvent) classes += 'has-event';
-    
-    days += `<td class="${classes}" onclick="selectDate('${dateStr}')">${i}</td>`;
+
+    days += `<td class="${classes}" onclick="selectDate(${currentYear}, ${currentMonth}, ${i})">${i}</td>`;
   }
   
   // Next month days
@@ -332,12 +329,12 @@ function changeMonth(direction) {
   renderCalendar();
 }
 
-function selectDate(dateStr) {
+function selectDate(year, month, day) {
   const events = agendaData.filter(event => {
-    const eventDate = new Date(event.start).toISOString().split('T')[0];
-    return eventDate === dateStr;
+    const ev = new Date(event.start);
+    return ev.getFullYear() === year && ev.getMonth() === month && ev.getDate() === day;
   });
-  
+
   if (events.length > 0) {
     showEventModal(events[0]);
   }

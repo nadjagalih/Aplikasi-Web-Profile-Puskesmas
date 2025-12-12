@@ -86,8 +86,11 @@ Route::get('/agenda/events', [AgendaController::class, 'getEvents']);
 
 Route::get('/berita', [BeritaController::class, 'index']);
 
-//Admin Dashboard 
-Auth::routes();
+//Admin Dashboard - Custom Secure Login Route
+// Login routes dengan URL unik
+Route::get('/endback/auth/secure-login', [\App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/endback/auth/secure-login', [\App\Http\Controllers\Auth\LoginController::class, 'login']);
+Route::post('/logout', [\App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
 
 // Custom reset password dengan username
 Route::get('/password/reset-username', [\App\Http\Controllers\Auth\CustomResetPasswordController::class, 'showResetForm'])->name('password.reset-username');
@@ -143,9 +146,9 @@ Route::put('/admin/kontak/{id}', [AdminKontakController::class, 'update']);
 Route::get('/admin/identitas-situs/', [AdminIdentitasSitusController::class, 'index']);
 Route::put('/admin/identitas-situs/{id}', [AdminIdentitasSitusController::class, 'update']);
 
-Route::get('/admin/profil/', [ProfilAdminController::class, 'index']);
-Route::put('/admin/profil/{id}', [ProfilAdminController::class, 'update']);
-Route::put('/admin/profil/', [ProfilAdminController::class, 'changePassword']);
+Route::get('/admin/profil/', [ProfilAdminController::class, 'index'])->name('admin.profil.index');
+Route::put('/admin/profil/change-password', [ProfilAdminController::class, 'changePassword'])->name('admin.profil.changePassword');
+Route::put('/admin/profil/{id}', [ProfilAdminController::class, 'update'])->name('admin.profil.update');
 
 Route::resource('/admin/layanan', AdminLayananController::class);
 

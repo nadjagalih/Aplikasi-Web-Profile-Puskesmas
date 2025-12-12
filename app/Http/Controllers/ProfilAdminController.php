@@ -23,17 +23,14 @@ class ProfilAdminController extends Controller
     {
         $user = User::find($id);
         
-        // Validasi umum
+        // Validasi - semua field nullable, validasi hanya di frontend
         $validator = Validator::make($request->all(), [
-            'name'       => 'required',
-            'username'   => 'required|unique:users,username,' . $id,
-            'email'      => 'required|email:rfc,dns',
+            'name'       => 'nullable',
+            'username'   => 'nullable|unique:users,username,' . $id,
+            'email'      => 'nullable|email:rfc,dns',
             'foto'       => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ], [
-            'name.required'      => 'Wajib menambahkan nama anda !',
-            'username.required'  => 'Wajib menambahkan username !',
             'username.unique'    => 'Username sudah digunakan !',
-            'email.required'     => 'Wajib menambahkan email untuk login !',
             'email.email'        => 'Gunakan email yang sah !',
             'foto.image'         => 'File harus berupa gambar !',
             'foto.mimes'         => 'Format gambar harus jpeg, png, jpg, atau gif !',

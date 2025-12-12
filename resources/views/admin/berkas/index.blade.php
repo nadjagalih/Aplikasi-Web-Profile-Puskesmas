@@ -17,7 +17,6 @@
                     @if(session('success'))
                         <div class="alert alert-success alert-dismissible fade show">
                             {{ session('success') }}
-                            <button type="button" class="close" data-dismiss="alert">&times;</button>
                         </div>
                     @endif
 
@@ -80,7 +79,7 @@
                                             <a href="{{ route('berkas.edit', $item->id) }}" class="btn btn-warning mb-1">
                                                 <i class="ti ti-edit"></i>
                                             </a>
-                                            <form action="{{ route('berkas.destroy', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus berkas ini?')">
+                                            <form action="{{ route('berkas.destroy', $item->id) }}" method="POST" class="d-inline delete-form">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-danger mb-1">

@@ -25,7 +25,7 @@ class AdminAlurPelayananController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'gambar' => 'required|image|mimes:jpeg,png,jpg|max:5120',
+            'gambar' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
             'deskripsi' => 'nullable|string',
         ], [
             'status.required' => 'Status wajib dipilih!',

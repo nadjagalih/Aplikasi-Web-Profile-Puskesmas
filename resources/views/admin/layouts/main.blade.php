@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dashboard Admin - Kecamatan Panggul</title>
+  <title>Dashboard Admin - {{ $situs->nm_puskesmas ?? 'Puskesmas' }}</title>
   <!-- Favicons - Multiple sizes for better compatibility -->
   <link rel="icon" type="image/x-icon" href="/assets/img/favicon.ico?v=2">
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32x32.png?v=2">
@@ -28,6 +28,14 @@
   <!-- Appex -->
   <script src="/admin/assets/libs/apexcharts/dist/apexcharts.min.js"></script>
 </head>
+
+  <style>
+    /* Hide close (x) on admin alert messages to prevent showing the small x */
+    .alert .close,
+    .alert .btn-close {
+      display: none !important;
+    }
+  </style>
 
 <body>
   <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"

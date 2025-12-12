@@ -2,10 +2,7 @@
 
 @section('content')
 
-@if(config('app.env') !== 'production')
-<!-- Tailwind CDN for Development Only -->
-<script src="https://cdn.tailwindcss.com"></script>
-@endif
+{{-- Tailwind not used on this project frontend; removed CDN/stub include --}}
 <style>
   :root {
     --primary-color: #007bff;

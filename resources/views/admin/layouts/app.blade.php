@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>@yield('title', 'Dashboard Admin') - Puskesmas</title>
+  <title>@yield('title', 'Dashboard Admin') - {{ $situs->nm_puskesmas ?? 'Puskesmas' }}</title>
   <!-- Favicons - Multiple sizes for better compatibility -->
   <link rel="icon" type="image/x-icon" href="/assets/img/favicon.ico?v=2">
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32x32.png?v=2">
@@ -29,6 +29,13 @@
   <script src="/admin/assets/libs/apexcharts/dist/apexcharts.min.js"></script>
 
   @stack('styles')
+  <style>
+    /* Hide close (x) on admin alert messages to prevent showing the small x */
+    .alert .close,
+    .alert .btn-close {
+      display: none !important;
+    }
+  </style>
 </head>
 
 <body>
@@ -72,6 +79,53 @@
           form.submit();
         }
       })
+    });
+    
+    // Handle delete-form class (for forms that submit to delete resources)
+    $(document).on('submit', '.delete-form', function(e) {
+      e.preventDefault();
+      var form = $(this);
+
+      Swal.fire({
+        title: 'Hapus Data Ini?',
+        text: "Data ini akan dihapus permanen!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Ya, Hapus!',
+        cancelButtonText: 'Batal'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Remove handler to avoid recursion and submit
+          form.off('submit').submit();
+        }
+      });
+    });
+
+    // Capture inline onsubmit confirms and replace with SweetAlert
+    $(document).ready(function() {
+      $('form[onsubmit*="confirm"]').each(function() {
+        var form = $(this);
+        form.removeAttr('onsubmit');
+        form.on('submit', function(e) {
+          e.preventDefault();
+          Swal.fire({
+            title: 'Hapus Data Ini?',
+            text: "Anda tidak akan dapat mengembalikan data yang dihapus!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              form.off('submit').submit();
+            }
+          });
+        });
+      });
     });
   </script>
   
