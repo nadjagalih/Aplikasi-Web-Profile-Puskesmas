@@ -31,31 +31,22 @@ npm run build
    - Sejarah Puskesmas
    - Visi & Misi
    - Struktur Organisasi
-   - Data Tenaga Medis (Dokter, Perawat, Bidan, dll)
-   - Poliklinik & Fasilitasi
-   - Lokasi & Peta Puskesmas
    
 3. **Layanan Kesehatan**
    - Informasi Layanan Kesehatan
-   - Jadwal Praktek Dokter
    - Alur Pelayanan
    - Persyaratan Layanan
    
 4. **Berita & Informasi**
    - Berita Kesehatan
-   - Kegiatan Puskesmas
    - Pengumuman
-   - Artikel Kesehatan
    - Gallery Kegiatan
    
 5. **Data & Statistik**
    - Survei Kepuasan Masyarakat (SKM)
-   - Data Kunjungan Pasien
-   - Grafik & Statistik Kesehatan
    
 6. **Kontak & Pengaduan**
    - Informasi Kontak
-   - Form Pengaduan Online
    - Lokasi Maps
 
 
@@ -106,5 +97,5 @@ Akses Aplikasi di Web browser
 
 Demo Login :
 1. Admin
-    - email     : admin@gmail.com
-    - password  : rahasia123
+    - username    : admindevpuskesmas
+    - password    : rahasia123
