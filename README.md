@@ -11,7 +11,7 @@
 
 
 
-Website Sistem Informasi Puskesmas adalah sebuah website yang dibangun menggunakan framework Laravel. Website ini dapat digunakan oleh puskesmas untuk mengelola berbagai informasi layanan kesehatan, kegiatan puskesmas, artikel kesehatan, dan layanan kepada masyarakat. Website ini dikembangkan sebagai pengganti website PKM Suruh (https://pkm-suruh.trenggalekkab.go.id/). Berikut adalah beberapa fitur dan komponen utama yang ada dalam aplikasi berbasis web Laravel ini:
+Website Sistem Informasi Puskesmas adalah sebuah website yang dibangun menggunakan framework Laravel. Website ini dapat digunakan oleh puskesmas untuk mengelola berbagai informasi layanan kesehatan, kegiatan puskesmas, artikel kesehatan, dan layanan kepada masyarakat. Website ini dikembangkan sebagai pengganti website PKM di Treggalek. Berikut adalah beberapa fitur dan komponen utama yang ada dalam aplikasi berbasis web Laravel ini:
 
 
 ###
