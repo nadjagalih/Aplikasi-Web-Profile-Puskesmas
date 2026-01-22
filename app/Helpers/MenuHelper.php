@@ -186,4 +186,41 @@ class MenuHelper
         
         return $breadcrumb;
     }
+
+    /**
+     * Get custom submenu untuk parent statis tertentu (profil, informasi)
+     * 
+     * @param string $parentSlug - 'profil' atau 'informasi'
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public static function getCustomSubmenu($parentSlug)
+    {
+        // Ambil submenu dari tabel menus untuk parent statis (profil, informasi)
+        $parentMenu = Menu::where('slug', $parentSlug)->first();
+        
+        if ($parentMenu) {
+            return Menu::where('parent_id', $parentMenu->id)
+                ->where('is_active', true)
+                ->orderBy('order')
+                ->get();
+        }
+        
+        return collect();
+    }
+
+    /**
+     * Get menu dinamis yang parent-nya NULL (menu baru di level teratas)
+     * Exclude menu statis: beranda, profil, informasi
+     * 
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public static function getCustomParentMenus()
+    {
+        return Menu::whereNull('parent_id')
+            ->where('is_active', true)
+            ->excludeStatic()
+            ->orderBy('order')
+            ->with('activeChildren')
+            ->get();
+    }
 }

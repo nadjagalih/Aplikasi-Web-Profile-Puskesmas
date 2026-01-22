@@ -8,6 +8,11 @@ use App\Helpers\HtmlSanitizer;
 
 class AdminAlurPelayananController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function index()
     {
         // Get or create single alur pelayanan record

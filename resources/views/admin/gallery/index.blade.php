@@ -29,27 +29,39 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>Gambar</th>
-                                    <th>Keterangan</th>
+                                    <th>Cover</th>
+                                    <th>Judul Album</th>
+                                    <th>Deskripsi</th>
+                                    <th>Jumlah Foto</th>
                                     <th>Opsi</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($gallerys as $gallery)
+                                @foreach ($albums as $album)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td><img src="{{ asset('storage/' . $gallery->gambar) }}" alt="Foto Gallery"
-                                            class="img-fluid" style="max-height: 200px; max-width: 200px"></td>
-                                    <td>{{ $gallery->keterangan }}</td>
+                                    <td><img src="{{ asset('storage/' . $album->cover_image) }}" alt="Cover Album"
+                                            class="img-fluid" style="max-height: 100px; max-width: 100px; object-fit: cover;"></td>
+                                    <td>{{ $album->judul }}</td>
+                                    <td>{{ Str::limit($album->deskripsi, 50) }}</td>
+                                    <td>{{ $album->images->count() }} foto</td>
                                     <td>
-                                        <a href="/admin/gallery/{{ $gallery->id }}/edit" type="button"
-                                            class="btn btn-warning mb-1"><i class="ti ti-edit"></i></a>
-                                        <form id="delete-form-{{ $gallery->id }}" action="/admin/gallery/{{ $gallery->id }}"
+                                        <a href="/admin/gallery/{{ $album->id }}" type="button"
+                                            class="btn btn-info mb-1" title="Detail Album">
+                                            <i class="ti ti-eye"></i>
+                                        </a>
+                                        <a href="/admin/gallery/{{ $album->id }}/edit" type="button"
+                                            class="btn btn-warning mb-1" title="Edit Album">
+                                            <i class="ti ti-edit"></i>
+                                        </a>
+                                        <form id="delete-form-{{ $album->id }}" action="/admin/gallery/{{ $album->id }}"
                                             method="POST" class="d-inline">
                                             @method('delete')
                                             @csrf
                                             <button type="button" class="btn btn-danger swal-confirm mb-1"
-                                                data-form="delete-form-{{ $gallery->id }}"><i class="ti ti-trash"></i></button>
+                                                data-form="delete-form-{{ $album->id }}" title="Hapus Album">
+                                                <i class="ti ti-trash"></i>
+                                            </button>
                                         </form>
                                     </td>
                                 </tr>

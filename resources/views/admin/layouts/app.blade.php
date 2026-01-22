@@ -84,7 +84,7 @@
     // Handle delete-form class (for forms that submit to delete resources)
     $(document).on('submit', '.delete-form', function(e) {
       e.preventDefault();
-      var form = $(this);
+      var form = this; // Use native DOM element, not jQuery object
 
       Swal.fire({
         title: 'Hapus Data Ini?',
@@ -97,8 +97,8 @@
         cancelButtonText: 'Batal'
       }).then((result) => {
         if (result.isConfirmed) {
-          // Remove handler to avoid recursion and submit
-          form.off('submit').submit();
+          // Use native submit to bypass all event listeners
+          HTMLFormElement.prototype.submit.call(form);
         }
       });
     });

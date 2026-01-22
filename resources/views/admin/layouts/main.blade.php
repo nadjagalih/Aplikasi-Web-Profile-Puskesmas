@@ -96,7 +96,7 @@
       // Handle delete-form class (for menu.blade.php and others)
       $(document).on('submit', '.delete-form', function(e) {
         e.preventDefault();
-        var form = $(this);
+        var form = this; // Use native DOM element, not jQuery object
         
         Swal.fire({
           title: 'Hapus Data Ini?',
@@ -109,8 +109,8 @@
           cancelButtonText: 'Batal'
         }).then((result) => {
           if (result.isConfirmed) {
-            // Remove event handler to prevent infinite loop, then submit
-            form.off('submit').submit();
+            // Use native submit to bypass all event listeners
+            HTMLFormElement.prototype.submit.call(form);
           }
         });
       });

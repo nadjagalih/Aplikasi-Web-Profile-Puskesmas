@@ -33,6 +33,46 @@
 
   <!-- Chart.js (Local) -->
   <script src="/vendor/chartjs/chart.umd.min.js"></script>
+  
+  <!-- Global Responsive Images CSS -->
+  <style>
+    /* Ensure all images are responsive globally */
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+    
+    /* Specific for content areas */
+    .content img,
+    .page-content img,
+    main img,
+    article img,
+    section img {
+      max-width: 100% !important;
+      height: auto !important;
+      width: auto !important;
+      display: block;
+    }
+    
+    /* Prevent content overflow */
+    .container img,
+    .row img,
+    .col img {
+      max-width: 100% !important;
+      height: auto !important;
+    }
+    
+    /* Override any inline styles */
+    img[style*="width"] {
+      width: auto !important;
+      max-width: 100% !important;
+    }
+    
+    img[width] {
+      width: auto !important;
+      max-width: 100% !important;
+    }
+  </style>
 </head>
 
 <body>

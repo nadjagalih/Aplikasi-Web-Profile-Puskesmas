@@ -25,6 +25,7 @@ use App\Http\Controllers\AdminSliderController;
 use App\Http\Controllers\AdminBeritaController;
 use App\Http\Controllers\AdminKontakController;
 use App\Http\Controllers\AdminGalleryController;
+use App\Http\Controllers\AdminAlbumImageController;
 use App\Http\Controllers\AdminLayananController;
 use App\Http\Controllers\AdminProfilPkmController;
 use App\Http\Controllers\AdminAnnouncementController;
@@ -76,7 +77,8 @@ Route::get('/alur-pelayanan', [AlurPelayananController::class, 'index']);
 Route::get('/berkas', [BerkasController::class, 'index'])->name('berkas.frontend');
 Route::get('/berkas/download/{id}', [BerkasController::class, 'download'])->name('berkas.download');
 
-Route::get('/gallery', [GalleryController::class, 'index']);
+Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery.index');
+Route::get('/galeri/{id}', [GalleryController::class, 'show'])->name('galeri.show');
 
 Route::get('/pengumuman', [AnnouncementController::class, 'index']);
 Route::get('/pengumuman/{pengumuman:slug}', [AnnouncementController::class, 'detail']);
@@ -86,10 +88,9 @@ Route::get('/agenda/events', [AgendaController::class, 'getEvents']);
 
 Route::get('/berita', [BeritaController::class, 'index']);
 
-//Admin Dashboard - Custom Secure Login Route
-// Login routes dengan URL unik
-Route::get('/endback/auth/secure-login', [\App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/endback/auth/secure-login', [\App\Http\Controllers\Auth\LoginController::class, 'login']);
+//Admin Dashboard - Login Route
+Route::get('/login', [\App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [\App\Http\Controllers\Auth\LoginController::class, 'login']);
 Route::post('/logout', [\App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
 
 // Custom reset password dengan username
@@ -138,7 +139,9 @@ Route::get('admin/visi-misi', [AdminVisiMisiController::class, 'index']);
 Route::get('admin/visi-misi/{id}/edit', [AdminVisiMisiController::class, 'edit']);
 Route::put('admin/visi-misi/{id}', [AdminVisiMisiController::class, 'update']);
 
-Route::resource('admin/struktur-organisasi', AdminStrukturOrganisasiController::class);
+Route::get('admin/struktur-organisasi', [AdminStrukturOrganisasiController::class, 'index'])->name('admin.struktur-organisasi.index');
+Route::post('admin/struktur-organisasi/upload-gambar', [AdminStrukturOrganisasiController::class, 'uploadGambarStruktur'])->name('admin.struktur-organisasi.upload-gambar');
+Route::delete('admin/struktur-organisasi/hapus-gambar', [AdminStrukturOrganisasiController::class, 'hapusGambarStruktur'])->name('admin.struktur-organisasi.hapus-gambar');
 
 Route::get('/admin/kontak', [AdminKontakController::class, 'index']);
 Route::put('/admin/kontak/{id}', [AdminKontakController::class, 'update']);
@@ -153,14 +156,15 @@ Route::put('/admin/profil/{id}', [ProfilAdminController::class, 'update'])->name
 Route::resource('/admin/layanan', AdminLayananController::class);
 
 Route::resource('/admin/gallery', AdminGalleryController::class);
+Route::post('/admin/gallery/{id}/images', [AdminGalleryController::class, 'storeImages'])->name('gallery.storeImages');
+Route::put('/admin/album-image/{id}', [AdminAlbumImageController::class, 'update'])->name('album-image.update');
+Route::delete('/admin/album-image/{id}', [AdminAlbumImageController::class, 'destroy'])->name('album-image.destroy');
 
 Route::get('/admin/pengumuman/slug', [AdminAnnouncementController::class, 'slug']);
 Route::resource('/admin/pengumuman', AdminAnnouncementController::class);
 
 Route::resource('/admin/berkas', AdminBerkasController::class);
 Route::get('/admin/berkas/{id}/preview', [AdminBerkasController::class, 'preview'])->name('berkas.preview');
-
-Route::get('/galeri/{id}', [GalleryController::class, 'show'])->name('galeri.show');
 
 // Dynamic Page Route (must be last to avoid conflicts with other routes)
 Route::get('/{slug}', [PageController::class, 'show'])->name('page.show');

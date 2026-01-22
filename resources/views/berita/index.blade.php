@@ -20,43 +20,56 @@
   /* Styles for Berita Section cards */
   .news-card .card {
     border-radius: 12px;
-    /* Rounded corners for the card */
     overflow: hidden;
-    /* Ensures content respects border-radius */
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-    /* Soft shadow */
     border: none;
-    /* Removes default card border */
     display: flex;
-    /* Use flexbox for consistent card heights */
     flex-direction: column;
-    /* Stack content vertically */
     height: 100%;
-    /* Ensure cards take full height of column */
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Image wrapper link */
+  .news-card .card > a {
+    display: block !important;
+    width: 100% !important;
+    height: 250px !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    line-height: 0 !important;
+    font-size: 0 !important;
+    background: #f0f0f0;
+    border: none !important;
+    flex-shrink: 0;
   }
 
   .news-card .card-img-top {
-    height: 200px;
-    /* Fixed height for consistent image size */
-    object-fit: cover;
-    /* Ensures images cover the area without distortion */
-    width: 100%;
-    /* Ensure image takes full width */
+    height: 250px !important;
+    min-height: 250px !important;
+    max-height: 250px !important;
+    object-fit: cover !important;
+    object-position: center !important;
+    width: 100% !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    vertical-align: top !important;
     transition: transform 0.3s ease-in-out;
-    /* Smooth hover effect for the image */
   }
 
   /* Add hover effect to the image when wrapped in a link */
-  .news-card .card-img-top:hover {
+  .news-card .card a:hover .card-img-top {
     transform: scale(1.05);
-    /* Slightly enlarge image on hover */
   }
 
   .news-card .card-body {
-    padding: 1.5rem;
-    /* Padding inside the card body */
+    padding: 1.5rem !important;
     flex-grow: 1;
-    /* Allows card body to grow and push footer down */
+    margin: 0 !important;
   }
 
   .news-card .card-title {
@@ -145,7 +158,7 @@
         <div class="count-box news-card">
           <div class="card">
             {{-- Wrap the image with an anchor tag to link to the detail page --}}
-            <a href="/berita/{{ $berita->slug }}" class="d-block">
+            <a href="/berita/{{ $berita->slug }}">
               @if($berita->gambar && file_exists(storage_path('app/public/' . $berita->gambar)))
                 <img src="{{ asset('storage/' . $berita->gambar) }}" alt="Gambar Berita" class="card-img-top">
               @else

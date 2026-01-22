@@ -45,16 +45,6 @@
                                         <i class="ti ti-news me-1"></i> Informasi
                                     </span>
                                 </div>
-                                <div class="col-md-4 mb-2">
-                                    <span class="badge bg-light text-dark border px-3 py-2">
-                                        <i class="ti ti-heart-plus me-1"></i> Layanan Kesehatan
-                                    </span>
-                                </div>
-                                <div class="col-md-4 mb-2">
-                                    <span class="badge bg-light text-dark border px-3 py-2">
-                                        <i class="ti ti-mail me-1"></i> Kontak
-                                    </span>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -72,13 +62,35 @@
                         <h5 class="fw-semibold mb-0">
                             <i class="ti ti-list text-primary me-2"></i>Daftar Menu
                         </h5>
+                        @php
+                            $totalDynamic = $dynamicMenus->count();
+                            $totalStatic = 3; // Beranda, Profil, Informasi
+                            $totalStaticSubmenus = 0;
+                            foreach($staticMenus as $sm) {
+                                $totalStaticSubmenus += $sm->children->count();
+                            }
+                            $totalMenus = $totalStatic + $totalStaticSubmenus + $totalDynamic;
+                        @endphp
                         <span class="badge bg-primary-subtle text-primary px-3 py-2">
                             <i class="ti ti-database me-1"></i>
-                            {{ $menus->count() }} Menu
+                            {{ $totalMenus }} Menu Total ({{ $totalStatic }} Statis + {{ $totalStaticSubmenus }} Submenu + {{ $totalDynamic }} Dinamis)
                         </span>
                     </div>
                 </div>
                 <div class="card-body p-0">
+                    @if(session('success'))
+                        <div class="alert alert-success alert-dismissible fade show m-3" role="alert">
+                            <i class="ti ti-check me-2"></i>{{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+                    
+                    @if(session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show m-3" role="alert">
+                            <i class="ti ti-x me-2"></i>{{ session('error') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
 
                     <div class="table-responsive">
                         <table class="table table-hover align-middle" id="menuTable">
@@ -108,10 +120,245 @@
                                 </tr>
                             </thead>
                             <tbody id="sortable-menu">
-                                @forelse($menus as $index => $menu)
+                                {{-- Menu Statis --}}
+                                @php
+                                    $displayStaticMenus = [
+                                        ['title' => 'Beranda', 'slug' => 'beranda', 'icon' => 'ti ti-home', 'url' => '/', 'order' => 10],
+                                        ['title' => 'Profil', 'slug' => 'profil', 'icon' => 'ti ti-user', 'url' => '#', 'order' => 20, 'type' => 'dropdown'],
+                                        ['title' => 'Informasi', 'slug' => 'informasi', 'icon' => 'ti ti-news', 'url' => '#', 'order' => 30, 'type' => 'dropdown'],
+                                    ];
+                                @endphp
+                                
+                                @foreach($displayStaticMenus as $index => $displayMenu)
+                                    @php
+                                        $staticMenu = $staticMenus->firstWhere('slug', $displayMenu['slug']);
+                                        $hasChildren = $staticMenu && $staticMenu->children->count() > 0;
+                                    @endphp
+                                    <tr class="menu-row parent-menu table-secondary">
+                                        <td class="text-center">
+                                            <span class="badge bg-secondary rounded-circle px-2 py-1">{{ $index + 1 }}</span>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                @if(isset($displayMenu['type']) && $displayMenu['type'] === 'dropdown')
+                                                    <button class="btn btn-sm btn-link p-0 me-2 toggle-submenu" 
+                                                            data-menu-id="static-{{ $displayMenu['slug'] }}"
+                                                            type="button">
+                                                        <i class="ti ti-chevron-right transition-icon"></i>
+                                                    </button>
+                                                @endif
+                                                @if($displayMenu['icon'])
+                                                    <div class="icon-box bg-secondary bg-opacity-25 text-secondary rounded me-2 p-2">
+                                                        <i class="{{ $displayMenu['icon'] }}"></i>
+                                                    </div>
+                                                @endif
+                                                <div>
+                                                    <strong class="d-block fw-bold text-dark">{{ $displayMenu['title'] }}</strong>
+                                                    <small class="text-muted">
+                                                        <span class="badge bg-secondary-subtle text-dark" style="font-size: 11px;">Menu Statis Sistem</span>
+                                                        @if($hasChildren)
+                                                            <span class="badge bg-info-subtle text-dark fw-semibold ms-1" style="font-size: 11px;">
+                                                                {{ $staticMenu->children->count() }} submenu
+                                                            </span>
+                                                        @endif
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-light text-dark border">
+                                                <i class="ti ti-link me-1"></i>
+                                                {{ $displayMenu['url'] }}
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-secondary fw-semibold">Statis</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-secondary-subtle text-dark fw-bold px-3 py-2">{{ $displayMenu['order'] }}</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-success">
+                                                <i class="ti ti-check me-1"></i>Aktif
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            @if(isset($displayMenu['type']) && $displayMenu['type'] === 'dropdown')
+                                                <button type="button" 
+                                                        class="btn btn-sm btn-info shadow-sm btn-add-submenu" 
+                                                        data-parent-id="{{ $staticMenu ? $staticMenu->id : '' }}"
+                                                        data-parent-slug="{{ $displayMenu['slug'] }}"
+                                                        data-parent-title="{{ $displayMenu['title'] }}"
+                                                        data-parent-url="{{ $displayMenu['url'] }}"
+                                                        data-parent-order="{{ $displayMenu['order'] }}"
+                                                        data-bs-toggle="tooltip"
+                                                        title="Tambah Submenu ke {{ $displayMenu['title'] }}">
+                                                    <i class="ti ti-plus"></i> Submenu
+                                                </button>
+                                            @else
+                                                <span class="badge bg-secondary-subtle text-dark">
+                                                    <i class="ti ti-lock me-1"></i>Tidak dapat diedit
+                                                </span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                    
+                                    {{-- Submenu Statis yang hardcoded --}}
+                                    @if(isset($displayMenu['type']) && $displayMenu['type'] === 'dropdown')
+                                        @php
+                                            // Define static submenus
+                                            $staticSubmenus = [];
+                                            if($displayMenu['slug'] === 'profil') {
+                                                $staticSubmenus = [
+                                                    ['title' => 'Sambutan', 'url' => '/sambutan', 'order' => 1],
+                                                    ['title' => 'Profil Puskesmas', 'url' => '/profil-puskesmas', 'order' => 2],
+                                                    ['title' => 'Visi & Misi', 'url' => '/visi-misi', 'order' => 3],
+                                                    ['title' => 'Struktur Organisasi', 'url' => '/struktur-organisasi', 'order' => 4],
+                                                ];
+                                            } elseif($displayMenu['slug'] === 'informasi') {
+                                                $staticSubmenus = [
+                                                    ['title' => 'Berita', 'url' => '/berita', 'order' => 1],
+                                                    ['title' => 'Pengumuman', 'url' => '/pengumuman', 'order' => 2],
+                                                    ['title' => 'Agenda', 'url' => '/agenda', 'order' => 3],
+                                                    ['title' => 'Gallery', 'url' => '/gallery', 'order' => 4],
+                                                    ['title' => 'Berkas', 'url' => '/berkas', 'order' => 5],
+                                                ];
+                                            }
+                                        @endphp
+                                        
+                                        {{-- Display static submenus first --}}
+                                        @foreach($staticSubmenus as $staticSub)
+                                            <tr class="submenu-static-{{ $displayMenu['slug'] }} child-menu bg-secondary bg-opacity-10" style="display: none;">
+                                                <td class="text-center">
+                                                    <i class="ti ti-lock text-secondary" data-bs-toggle="tooltip" title="Submenu Statis Sistem"></i>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex align-items-center ps-4">
+                                                        <i class="ti ti-corner-down-right text-secondary me-2"></i>
+                                                        <div>
+                                                            <strong class="d-block text-dark">{{ $staticSub['title'] }}</strong>
+                                                            <small class="text-muted">
+                                                                <span class="badge bg-secondary-subtle text-dark" style="font-size: 10px;">
+                                                                    <i class="ti ti-lock me-1"></i>Submenu Statis Sistem
+                                                                </span>
+                                                            </small>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-light text-dark border">
+                                                        <i class="ti ti-link me-1"></i>{{ $staticSub['url'] }}
+                                                    </span>
+                                                </td>
+                                                <td class="text-center">
+                                                    <span class="badge bg-secondary fw-semibold">Statis</span>
+                                                </td>
+                                                <td class="text-center">
+                                                    <span class="badge bg-light text-dark">{{ $staticSub['order'] }}</span>
+                                                </td>
+                                                <td class="text-center">
+                                                    <span class="badge bg-success">
+                                                        <i class="ti ti-check me-1"></i>Aktif
+                                                    </span>
+                                                </td>
+                                                <td class="text-center">
+                                                    <span class="badge bg-secondary-subtle text-dark">
+                                                        <i class="ti ti-lock me-1"></i>Tidak dapat diedit
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @endif
+                                    
+                                    {{-- Submenu dinamis untuk menu statis (dari tabel menus) --}}
+                                    @if($hasChildren)
+                                        @foreach($staticMenu->children as $submenu)
+                                            <tr class="submenu-static-{{ $displayMenu['slug'] }} child-menu" style="display: none;">
+                                                <td></td>
+                                                <td>
+                                                    <div class="d-flex align-items-center ps-4">
+                                                        <i class="ti ti-corner-down-right text-muted me-2"></i>
+                                                        <div>
+                                                            <strong class="d-block text-dark">{{ $submenu->title }}</strong>
+                                                            <small class="text-muted">
+                                                                <span class="badge bg-info-subtle text-dark" style="font-size: 10px;">
+                                                                    <i class="ti ti-database me-1"></i>Submenu Dinamis
+                                                                </span>
+                                                            </small>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-light text-dark border">{{ Str::limit($submenu->url, 25) }}</span>
+                                                </td>
+                                                <td class="text-center">
+                                                    <span class="badge bg-{{ $submenu->type === 'parent_only' ? 'success' : 'info' }}-subtle text-dark">
+                                                        {{ $submenu->type === 'parent_only' ? 'Halaman' : 'Parent' }}
+                                                    </span>
+                                                </td>
+                                                <td class="text-center">
+                                                    <span class="badge bg-light text-dark">{{ $submenu->order }}</span>
+                                                </td>
+                                                <td class="text-center">
+                                                    <div class="form-check form-switch d-flex justify-content-center">
+                                                        <input class="form-check-input toggle-status" 
+                                                               type="checkbox" 
+                                                               data-id="{{ $submenu->id }}"
+                                                               {{ $submenu->is_active ? 'checked' : '' }}>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="btn-group btn-group-sm" role="group">
+                                                        <a href="{{ route('menu.edit', $submenu) }}" 
+                                                           class="btn btn-sm btn-warning shadow-sm"
+                                                           data-bs-toggle="tooltip"
+                                                           title="Edit Menu">
+                                                            <i class="ti ti-edit"></i>
+                                                        </a>
+                                                        
+                                                        @if($submenu->page)
+                                                            <a href="{{ route('pages.edit', $submenu->page->id) }}" 
+                                                               class="btn btn-sm btn-success shadow-sm"
+                                                               data-bs-toggle="tooltip"
+                                                               title="Edit Halaman">
+                                                                <i class="ti ti-file-text"></i>
+                                                            </a>
+                                                        @else
+                                                            <button type="button"
+                                                                    class="btn btn-sm btn-primary shadow-sm create-page-btn"
+                                                                    data-menu-id="{{ $submenu->id }}"
+                                                                    data-menu-title="{{ $submenu->title }}"
+                                                                    data-menu-slug="{{ $submenu->slug }}"
+                                                                    data-bs-toggle="tooltip"
+                                                                    title="Buat Halaman">
+                                                                <i class="ti ti-file-plus"></i>
+                                                            </button>
+                                                        @endif
+                                                        
+                                                        <form action="{{ route('menu.destroy', $submenu) }}" 
+                                                              method="POST" 
+                                                              class="d-inline delete-form">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" 
+                                                                    class="btn btn-sm btn-danger shadow-sm" 
+                                                                    data-bs-toggle="tooltip"
+                                                                    title="Hapus">
+                                                                <i class="ti ti-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @endif
+                                @endforeach
+                                
+                                {{-- Menu Dinamis --}}
+                                @forelse($dynamicMenus as $index => $menu)
                                     <tr data-id="{{ $menu->id }}" data-position="{{ $menu->position }}" class="menu-row parent-menu">
                                         <td class="text-center">
-                                            <span class="badge bg-primary rounded-circle px-2 py-1">{{ $index + 1 }}</span>
+                                            <span class="badge bg-primary rounded-circle px-2 py-1">D{{ $index + 1 }}</span>
                                         </td>
                                         <td>
                                             <div class="d-flex align-items-center">
@@ -130,7 +377,7 @@
                                                 <div>
                                                     <strong class="d-block fw-bold text-dark">{{ $menu->title }}</strong>
                                                     <small class="text-muted">
-                                                        Parent Menu
+                                                        <span class="badge bg-primary-subtle text-dark" style="font-size: 11px;">Menu Dinamis</span>
                                                         @if($menu->children->count() > 0)
                                                             <span class="badge bg-info-subtle text-dark fw-semibold ms-1" style="font-size: 11px;">{{ $menu->children->count() }} submenu</span>
                                                         @endif
@@ -139,10 +386,10 @@
                                             </div>
                                         </td>
                                         <td>
-                                            @if($menu->full_url)
+                                            @if($menu->url)
                                                 <span class="badge bg-light text-dark border">
-                                                    <i class="ti ti-external-link me-1"></i>
-                                                    {{ $menu->full_url }}
+                                                    <i class="ti ti-link me-1"></i>
+                                                    {{ Str::limit($menu->url, 25) }}
                                                 </span>
                                             @else
                                                 <span class="text-muted fst-italic">-</span>
@@ -159,7 +406,7 @@
                                             <span class="badge bg-secondary-subtle text-dark fw-bold px-3 py-2">{{ $menu->order }}</span>
                                         </td>
                                         <td class="text-center">
-                                            <div class="form-check form-switch">
+                                            <div class="form-check form-switch d-flex justify-content-center">
                                                 <input class="form-check-input toggle-status" 
                                                        type="checkbox" 
                                                        data-id="{{ $menu->id }}"
@@ -178,7 +425,7 @@
                                                 @if($menu->type === 'parent_with_sub')
                                                     {{-- Menu type is parent_with_sub: show "Add Submenu" button --}}
                                                     <button type="button" 
-                                                            class="btn btn-sm btn-info shadow-sm add-submenu-btn" 
+                                                            class="btn btn-sm btn-info shadow-sm btn-add-submenu" 
                                                             data-parent-id="{{ $menu->id }}"
                                                             data-bs-toggle="tooltip"
                                                             title="Tambah Submenu">
@@ -240,15 +487,15 @@
                                                         @endif
                                                         <div>
                                                             <span class="d-block fw-semibold text-dark">{{ $child->title }}</span>
-                                                            <small class="text-muted">Submenu</small>
+                                                            <small class="text-muted">Submenu Dinamis</small>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    @if($child->full_url)
+                                                    @if($child->url)
                                                         <span class="badge bg-light text-dark border">
-                                                            <i class="ti ti-external-link me-1"></i>
-                                                            {{ $child->full_url }}
+                                                            <i class="ti ti-link me-1"></i>
+                                                            {{ Str::limit($child->url, 25) }}
                                                         </span>
                                                     @else
                                                         <span class="text-muted fst-italic">-</span>
@@ -262,8 +509,8 @@
                                                         {{ $menu->order }}.{{ $loop->iteration }}
                                                     </span>
                                                 </td>
-                                                <td>
-                                                    <div class="form-check form-switch">
+                                                <td class="text-center">
+                                                    <div class="form-check form-switch d-flex justify-content-center">
                                                         <input class="form-check-input toggle-status" 
                                                                type="checkbox" 
                                                                data-id="{{ $child->id }}"
@@ -318,12 +565,9 @@
                                     @endif
                                 @empty
                                     <tr>
-                                        <td colspan="7" class="text-center py-5">
-                                            <div class="text-muted">
-                                                <i class="ti ti-menu-2 fs-1 opacity-25 d-block mb-3"></i>
-                                                <p class="fw-semibold mb-2">Belum ada menu tersedia</p>
-                                                <small>Klik tombol "Tambah Menu" untuk membuat menu baru</small>
-                                            </div>
+                                        <td colspan="7" class="text-center py-5 text-muted">
+                                            <i class="ti ti-folder-off fs-1 mb-3 d-block"></i>
+                                            <p class="mb-0">Tidak ada menu dinamis. Klik tombol "Tambah Menu" untuk membuat menu baru.</p>
                                         </td>
                                     </tr>
                                 @endforelse
@@ -604,16 +848,47 @@
 @endpush
 
 @push('scripts')
-@if(session('success') || session('error'))
-<script id="session-data" type="application/json">
-{
-    "success": {{ Js::from(session('success')) }},
-    "error": {{ Js::from(session('error')) }}
-}
-</script>
-@endif
-
 <script>
+// Global function untuk open submenu modal (dipanggil dari onclick)
+function openAddSubmenuModal(parentId) {
+    console.log('Opening submenu modal for parent ID:', parentId);
+    
+    // Reset form
+    const form = document.getElementById('submenuForm');
+    if (form) {
+        form.reset();
+        
+        // Hapus hidden fields auto_create_parent jika ada
+        $('#submenuForm input[name="auto_create_parent"]').remove();
+        $('#submenuForm input[name="parent_slug"]').remove();
+        $('#submenuForm input[name="parent_title"]').remove();
+        $('#submenuForm input[name="parent_url"]').remove();
+        $('#submenuForm input[name="parent_order"]').remove();
+    }
+    
+    // Set parent ID
+    const parentInput = document.getElementById('parent_id');
+    if (parentInput) {
+        parentInput.value = parentId;
+    }
+    
+    // Set link type to internal
+    const linkTypeSelect = document.getElementById('submenu_link_type');
+    if (linkTypeSelect) {
+        linkTypeSelect.value = 'internal';
+        $(linkTypeSelect).trigger('change');
+    }
+    
+    // Show modal
+    const modalElement = document.getElementById('addSubmenuModal');
+    if (modalElement) {
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();
+    } else {
+        alert('Error: Modal tidak ditemukan!');
+    }
+}
+
 // Global function untuk create page (dipanggil dari onclick)
 function createPageFromMenu(menuId, menuTitle, menuSlug, button) {
     const $button = $(button);
@@ -672,68 +947,26 @@ function createPageFromMenu(menuId, menuTitle, menuSlug, button) {
 }
 
 $(document).ready(function() {
-    // Initialize Bootstrap tooltips
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-
-    // Session messages
-    var sessionData = document.getElementById('session-data');
-    var successMessage = null;
-    var errorMessage = null;
-    
-    if (sessionData) {
-        var data = JSON.parse(sessionData.textContent);
-        successMessage = data.success;
-        errorMessage = data.error;
-    }
-
-    // Show SweetAlert for success message
-    if(successMessage) {
-        Swal.fire({
-            icon: 'success',
-            title: 'Berhasil!',
-            text: successMessage,
-            timer: 3000,
-            showConfirmButton: false,
-            position: 'top-end',
-            toast: true
-        });
-    }
-
-    if(errorMessage) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Gagal!',
-            text: errorMessage,
-            timer: 3000,
-            showConfirmButton: false,
-            position: 'top-end',
-            toast: true
-        });
-    }
-
-    // Delete confirmation with SweetAlert
-    $(document).on('submit', '.delete-form', function(e) {
-        e.preventDefault();
-        const form = this;
-        
-        Swal.fire({
-            title: 'Apakah Anda yakin?',
-            text: "Menu ini akan dihapus permanen!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Ya, Hapus!',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                form.submit();
+    // Function to initialize tooltips
+    function initTooltips() {
+        // Dispose existing tooltips first
+        var existingTooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        existingTooltips.forEach(function(el) {
+            var tooltip = bootstrap.Tooltip.getInstance(el);
+            if (tooltip) {
+                tooltip.dispose();
             }
         });
-    });
+        
+        // Initialize new tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    }
+    
+    // Initialize tooltips on page load
+    initTooltips();
 
     // Toggle Status
     $('.toggle-status').change(function() {
@@ -776,14 +1009,39 @@ $(document).ready(function() {
         });
     });
 
-    // Handle Add Submenu Modal
-    $(document).on('click', '.add-submenu-btn', function() {
-        const parentId = $(this).data('parent-id');
-        $('#parent_id').val(parentId);
-        $('#submenuForm')[0].reset();
-        $('#parent_id').val(parentId); // Set again after reset
-        $('#submenu_link_type').val('internal').trigger('change');
-        $('#addSubmenuModal').modal('show');
+    // Handle Add Submenu button click (using data attribute)
+    $(document).on('click', '.btn-add-submenu', function(e) {
+        e.preventDefault();
+        const $btn = $(this);
+        const parentId = $btn.data('parent-id');
+        
+        // Jika parent belum ada (ID kosong), buat dulu parent-nya
+        if (!parentId || parentId === '') {
+            const parentSlug = $btn.data('parent-slug');
+            const parentTitle = $btn.data('parent-title');
+            const parentUrl = $btn.data('parent-url');
+            const parentOrder = $btn.data('parent-order');
+            
+            // Simpan data untuk submenu modal
+            window.pendingSubmenuData = {
+                slug: parentSlug,
+                title: parentTitle,
+                url: parentUrl,
+                order: parentOrder
+            };
+            
+            // Set flag bahwa ini untuk static parent
+            $('#submenuForm').append('<input type="hidden" name="auto_create_parent" value="1">');
+            $('#submenuForm').append('<input type="hidden" name="parent_slug" value="' + parentSlug + '">');
+            $('#submenuForm').append('<input type="hidden" name="parent_title" value="' + parentTitle + '">');
+            $('#submenuForm').append('<input type="hidden" name="parent_url" value="' + parentUrl + '">');
+            $('#submenuForm').append('<input type="hidden" name="parent_order" value="' + parentOrder + '">');
+            
+            openAddSubmenuModal('');
+        } else {
+            // Parent sudah ada, langsung buka modal
+            openAddSubmenuModal(parentId);
+        }
     });
 
     // Handle submenu link type change
@@ -833,6 +1091,7 @@ $(document).ready(function() {
     // Trigger change on page load to set initial state
     $('#submenu_link_type').trigger('change');
 
+    // Handle Create Static Parent Menu button
     // Handle Create Page From Menu button
     $(document).on('click', '.create-page-btn', function() {
         const menuId = $(this).data('menu-id');
@@ -845,12 +1104,36 @@ $(document).ready(function() {
 
     // Toggle Submenu Visibility
     $('.toggle-submenu').on('click', function() {
-        const menuId = $(this).data('menu-id');
-        const submenuRows = $('.submenu-' + menuId);
+        const menuId = String($(this).data('menu-id')); // Convert to string
+        console.log('Toggle clicked, menuId:', menuId, 'type:', typeof menuId);
+        
+        // Support dynamic menu submenu, static menu submenu, and custom menu submenu
+        let submenuRows;
+        if (menuId.startsWith('static-')) {
+            // Static menu (profil, informasi)
+            const staticSlug = menuId.replace('static-', '');
+            submenuRows = $('.submenu-static-' + staticSlug);
+            console.log('Static menu, selector: .submenu-static-' + staticSlug, 'Found:', submenuRows.length);
+        } else if (menuId.startsWith('custom-')) {
+            // Custom menu
+            const customId = menuId.replace('custom-', '');
+            submenuRows = $('.submenu-custom-' + customId);
+            console.log('Custom menu, selector: .submenu-custom-' + customId, 'Found:', submenuRows.length);
+        } else {
+            // Dynamic menu (numeric ID)
+            submenuRows = $('.submenu-' + menuId);
+            console.log('Dynamic menu, selector: .submenu-' + menuId, 'Found:', submenuRows.length);
+        }
+        
         const icon = $(this).find('.transition-icon');
         
-        submenuRows.slideToggle(300);
-        $(this).toggleClass('active');
+        if (submenuRows.length > 0) {
+            submenuRows.slideToggle(300);
+            $(this).toggleClass('active');
+            console.log('Toggled submenu visibility');
+        } else {
+            console.log('No submenu rows found!');
+        }
     });
     
     // Update URL when title changes (for internal links only)

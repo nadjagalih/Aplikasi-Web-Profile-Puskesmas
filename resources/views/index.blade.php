@@ -121,6 +121,8 @@
     height: 100%;
     display: flex;
     flex-direction: column;
+    padding: 0 !important;
+    margin: 0 !important;
   }
 
   .berita-image-wrapper {
@@ -128,12 +130,25 @@
     height: 280px;
     overflow: hidden;
     border-radius: 0;
+    line-height: 0;
+    font-size: 0;
+    padding: 0 !important;
+    margin: 0 !important;
   }
 
   .berita-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    width: 100% !important;
+    height: 280px !important;
+    min-height: 280px !important;
+    max-height: 280px !important;
+    object-fit: cover !important;
+    object-position: center !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    vertical-align: top !important;
   }
 
   .berita-badge {
@@ -615,34 +630,131 @@
   /* Responsive Adjustments for Hero */
   @media (max-width: 991px) {
     #hero {
-      height: calc(60vh - 0px);
+      height: auto;
+      min-height: 300px;
+      max-height: 500px;
+    }
+
+    #hero .carousel-item {
+      height: auto;
+      min-height: 300px;
+      max-height: 500px;
+    }
+
+    #hero .carousel-item img {
+      width: 100%;
+      height: auto;
+      max-height: 500px;
+      object-fit: contain;
+      object-position: center;
     }
 
     .carousel-caption-custom {
-      bottom: 60px;
+      bottom: 40px;
     }
 
     .carousel-caption-custom h2 {
-      font-size: 2rem;
+      font-size: 1.5rem;
+    }
+    
+    #heroCarousel .carousel-control-prev,
+    #heroCarousel .carousel-control-next {
+      width: 10%;
     }
   }
 
   @media (max-width: 767px) {
     #hero {
-      height: calc(50vh - 0px);
+      height: auto;
+      min-height: 250px;
+      max-height: 400px;
+    }
+
+    #hero .carousel-item {
+      height: auto;
+      min-height: 250px;
+      max-height: 400px;
+    }
+
+    #hero .carousel-item img {
+      width: 100%;
+      height: auto;
+      max-height: 400px;
+      object-fit: contain;
+      object-position: center;
     }
 
     #heroCarousel .carousel-control-prev,
     #heroCarousel .carousel-control-next {
-      width: 10%;
+      width: 12%;
     }
 
     .carousel-caption-custom {
-      bottom: 50px;
+      bottom: 25px;
+      width: 90%;
     }
 
     .carousel-caption-custom h2 {
-      font-size: 1.5rem;
+      font-size: 1.1rem;
+      line-height: 1.4;
+      text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8);
+    }
+    
+    #hero-carousel-indicators {
+      bottom: 10px;
+    }
+    
+    #hero-carousel-indicators li {
+      width: 8px;
+      height: 8px;
+      margin: 0 3px;
+    }
+  }
+  
+  @media (max-width: 575px) {
+    #hero {
+      height: auto;
+      min-height: 200px;
+      max-height: 350px;
+    }
+
+    #hero .carousel-item {
+      height: auto;
+      min-height: 200px;
+      max-height: 350px;
+    }
+
+    #hero .carousel-item img {
+      width: 100%;
+      height: auto;
+      max-height: 350px;
+      object-fit: contain;
+      object-position: center;
+    }
+    
+    .carousel-caption-custom h2 {
+      font-size: 0.95rem;
+      line-height: 1.3;
+    }
+    
+    .carousel-caption-custom {
+      bottom: 20px;
+      width: 95%;
+    }
+
+    #heroCarousel .carousel-control-prev,
+    #heroCarousel .carousel-control-next {
+      width: 15%;
+    }
+
+    #hero-carousel-indicators {
+      bottom: 8px;
+    }
+
+    #hero-carousel-indicators li {
+      width: 7px;
+      height: 7px;
+      margin: 0 2px;
     }
   }
 
@@ -1382,7 +1494,7 @@
               <div class="col-md-4">
                 <div class="gallery-card">
                   <div class="gallery-image">
-                    <img src="{{ asset('storage/' . $gallery->gambar) }}" alt="{{ $gallery->judul }}" class="d-block w-100" loading="lazy">
+                    <img src="{{ asset('storage/' . $gallery->cover_image) }}" alt="{{ $gallery->judul }}" class="d-block w-100" loading="lazy">
                     <div class="gallery-overlay">
                       <div class="overlay-content">
                         <h5>{{ $gallery->judul }}</h5>
@@ -1390,7 +1502,7 @@
                         <p>{{ Str::limit($gallery->deskripsi, 80) }}</p>
                         @endif
                         <a href="{{ route('galeri.show', $gallery->id) }}" class="btn-view">
-                          <i class="bi bi-eye"></i> Lihat Detail
+                          <i class="bi bi-eye"></i> Lihat Detail ({{ $gallery->images->count() }} Foto)
                         </a>
                       </div>
                     </div>
@@ -1423,7 +1535,7 @@
               <div class="col-12">
                 <div class="gallery-card">
                   <div class="gallery-image">
-                    <img src="{{ asset('storage/' . $gallery->gambar) }}" alt="{{ $gallery->judul }}" class="d-block w-100" loading="lazy">
+                    <img src="{{ asset('storage/' . $gallery->cover_image) }}" alt="{{ $gallery->judul }}" class="d-block w-100" loading="lazy">
                     <div class="gallery-overlay">
                       <div class="overlay-content">
                         <h5>{{ $gallery->judul }}</h5>
@@ -1431,7 +1543,7 @@
                         <p>{{ Str::limit($gallery->deskripsi, 80) }}</p>
                         @endif
                         <a href="{{ route('galeri.show', $gallery->id) }}" class="btn-view">
-                          <i class="bi bi-eye"></i> Lihat Detail
+                          <i class="bi bi-eye"></i> Lihat Detail ({{ $gallery->images->count() }} Foto)
                         </a>
                       </div>
                     </div>

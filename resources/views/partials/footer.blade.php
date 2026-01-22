@@ -71,8 +71,18 @@
     font-size: 14px !important;
   }
 
+  /* Social media icons specific styling */
+  #footer .footer-links a img {
+    max-width: 32px !important;
+    max-height: 32px !important;
+    width: 32px !important;
+    height: 32px !important;
+    object-fit: contain;
+  }
+
   #footer .footer-links a img:hover {
     transform: scale(1.1);
+    opacity: 0.8;
   }
 </style>
 
@@ -150,19 +160,19 @@
 
         <div class="col-lg-2 col-md-6 footer-links">
           <h4>Hubungi Kami</h4>
-          <div class="d-flex gap-3 mt-3">
+          <div class="d-flex gap-2 mt-3 align-items-center">
             <a href="https://wa.me/62{{ $kontak->no_hp }}" target="_blank" class="text-decoration-none" title="WhatsApp">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" width="40" height="40" style="transition: transform 0.3s;">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" width="32" height="32" style="transition: transform 0.3s;">
             </a>
             <a href="#" 
                class="text-decoration-none email-contact-link" 
                data-email="{{ base64_encode($kontak->email) }}"
                onclick="event.preventDefault(); window.location.href='mailto:'+atob(this.dataset.email);"
                title="Gmail">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Gmail_Icon.png" alt="Gmail" width="40" height="40" style="transition: transform 0.3s;">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Gmail_Icon.png" alt="Gmail" width="32" height="32" style="transition: transform 0.3s;">
             </a>
             <a href="{{ $kontak->instagram_url }}" target="_blank" class="text-decoration-none" title="Instagram">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" width="40" height="40" style="transition: transform 0.3s;">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" width="32" height="32" style="transition: transform 0.3s;">
             </a>
           </div>
         </div>

@@ -67,3 +67,28 @@ if (!function_exists('is_menu_active')) {
         return MenuHelper::isActive($url);
     }
 }
+
+if (!function_exists('get_custom_submenu')) {
+    /**
+     * Get custom submenu untuk parent statis tertentu
+     *
+     * @param string $parentSlug
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    function get_custom_submenu($parentSlug)
+    {
+        return MenuHelper::getCustomSubmenu($parentSlug);
+    }
+}
+
+if (!function_exists('get_custom_parent_menus')) {
+    /**
+     * Get menu custom yang parent-nya NULL (menu baru di level teratas)
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    function get_custom_parent_menus()
+    {
+        return MenuHelper::getCustomParentMenus();
+    }
+}
