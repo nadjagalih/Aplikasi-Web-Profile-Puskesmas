@@ -53,12 +53,12 @@
                                             <td>
                                                 <a href="/admin/layanan/{{ $layanan->id }}/edit" type="button"
                                                     class="btn btn-warning mb-1"><i class="ti ti-edit"></i></a>
-                                                <form id="{{ $layanan->id }}" action="/admin/layanan/{{ $layanan->id }}"
+                                                <form id="delete-form-{{ $layanan->id }}" action="/admin/layanan/{{ $layanan->id }}"
                                                     method="POST" class="d-inline">
                                                     @method('delete')
                                                     @csrf
                                                     <button type="button" class="btn btn-danger swal-confirm mb-1"
-                                                        data-form="{{ $layanan->id }}"><i class="ti ti-trash"></i></button>
+                                                        data-form="delete-form-{{ $layanan->id }}"><i class="ti ti-trash"></i></button>
                                                 </form>
                                             </td>
                                         </tr>

@@ -6,9 +6,15 @@ use App\Models\Profil;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use App\Helpers\HtmlSanitizer;
 
 class AdminProfilPkmController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function index()
     {
         $profil = Profil::first();
@@ -44,7 +50,7 @@ class AdminProfilPkmController extends Controller
 
         $profil->update([
             'judul'     => $request->judul,
-            'body'      => $request->body,
+            'body'      => HtmlSanitizer::sanitize($request->body),
         ]);
 
         return redirect('/admin/profilpkm')->with('success', 'Berhasil memperbarui data profil desa');

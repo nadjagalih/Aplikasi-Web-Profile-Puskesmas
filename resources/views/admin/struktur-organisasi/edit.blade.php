@@ -3,81 +3,76 @@
 @section('content')
 <div class="row">
     <div class="col-lg-12 d-flex align-items-strech">
-        <div class="card w-100">
-            <div class="card-header bg-primary">
-                <div class="row align-items-center">
-                    <div class="col-6">
-                        <h5 class="card-title fw-semibold text-white">Edit Pegawai</h5>
-                    </div>
-                    <div class="col-6 text-right">
-                        <a href="/admin/struktur-organisasi" type="button" class="btn btn-warning float-end">Kembali</a>
-                    </div>
+      <div class="card w-100">
+        <div class="card-header bg-primary">
+            <div class="row align-items-center">
+                <div class="col-6">
+                    <h5 class="card-title fw-semibold text-white">Edit Struktur Organisasi</h5>
                 </div>
             </div>
+        </div>
+        
+        <div class="card-body">
+            @if ($errors->any())
+            <div class="alert alert-danger">
+              <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                  <li>{{ $error }}</li>
+                @endforeach
+              </ul>
+            </div>
+            @endif
+
+            <form method="POST" action="{{ route('admin.struktur-organisasi.update') }}" enctype="multipart/form-data">
+                @method('put')
+                @csrf
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="mb-3">
+                            <label for="content" class="form-label">Konten Struktur Organisasi <span style="color: red">*</span></label>
+                            <textarea class="form-control" id="editor" name="content" rows="10" required>{{ old('content', $gambarStruktur->content ?? '') }}</textarea>
+                            <small class="text-muted">
+                              Gunakan editor untuk menambahkan teks dan gambar struktur organisasi
+                            </small>
+                            @error('content')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="text-end">
+                            <a href="{{ route('admin.struktur-organisasi.index') }}" class="btn btn-secondary m-1">
+                                <i class="ti ti-arrow-left"></i> Kembali
+                            </a>
+                            <button type="submit" class="btn btn-primary m-1">
+                                <i class="ti ti-device-floppy"></i> Simpan
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
-<div class="row">
-    <form method="POST" action="/admin/struktur-organisasi/{{ $strukturOrganisasi->id }}" enctype="multipart/form-data">
-        @method('put')
-        @csrf
-        <div class="row">
-            <div class="col-lg-8">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <label for="nama" class="form-label">Nama <span style="color: red">*</span></label>
-                            <input type="text" class="form-control" name="nama" id="nama" value="{{ old('nama', $strukturOrganisasi->nama) }}">
-                            @error('nama')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="mb-3">
-                            <label for="jabatan" class="form-label">Jabatan <span style="color: red">*</span></label>
-                            <input type="text" class="form-control" name="jabatan" id="jabatan" value="{{ old('jabatan', $strukturOrganisasi->jabatan) }}">
-                            @error('jabatan')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <img src="{{ asset('storage/' .$strukturOrganisasi->foto) }}" class="img-preview img-fluid mb-3 mt-2" id="preview" style="border-radius: 5px; max-height:300px; overflow:hidden;"><br>
-                            <label for="foto" class="form-label">Foto Perangkat Kecamatan <span style="color: red">*</span></label>
-                            <input class="form-control" type="file" id="foto" name="foto" onchange="previewImage()">
-                            @error('foto')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <button type="submit" class="btn btn-primary m-1 float-end">Simpan</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </form>
-</div>
-
-
-<!-- Preview Image -->
+<!-- CK Editor 5 -->
 <script>
-    function previewImage() {
-        var preview = document.getElementById('preview');
-        var fileInput = document.getElementById('foto');
-        var file = fileInput.files[0];
-        var reader = new FileReader();
-
-        reader.onload = function(e) {
-            preview.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-    }
+    let editorInstance;
+    ClassicEditor
+        .create( document.querySelector( '#editor' ), {
+            simpleUpload: {
+                uploadUrl: "{{ route('admin.struktur-organisasi.upload-image', ['_token' => csrf_token()]) }}",
+                withCredentials: true,
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            }
+        })
+        .then( editor => {
+             editorInstance = editor;
+        } )
+        .catch( error => {
+            console.error( error );
+        } );
 </script>
-
 @endsection

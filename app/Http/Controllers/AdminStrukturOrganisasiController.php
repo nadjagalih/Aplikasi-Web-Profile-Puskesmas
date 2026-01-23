@@ -11,154 +11,95 @@ use Illuminate\Support\Facades\Auth;
 
 class AdminStrukturOrganisasiController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
+        // Ambil gambar struktur organisasi (hanya 1 yang aktif)
+        $gambarStruktur = StrukturOrganisasi::first();
+        
         return view('admin.struktur-organisasi.index', [
-            'strukturOrganisasi'   => StrukturOrganisasi::orderBy('id', 'DESC')->get()
+            'gambarStruktur'       => $gambarStruktur
         ]);
     }
-
+    
     /**
-     * Show the form for creating a new resource.
+     * Upload gambar struktur organisasi
      */
-    public function create()
-    {
-        return view('admin.struktur-organisasi.create');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function uploadGambarStruktur(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'nama'      => 'required',
-            'jabatan'   => 'required',
-            'foto'      => 'required|image|mimes:jpeg,jpg,png|max:2048',
+            'gambar_struktur' => 'required|image|mimes:jpeg,jpg,png|max:5120',
         ], [
-
-            'nama.required'     => 'Wajib menambahkan nama struktur organisasi !',
-            'jabatan.required'  => 'Wajib menambahkan jabatan struktur organisasi !',
-            'foto.required'     => 'Wajib menambahkan foto struktur organisasi !',
-            'foto.image'        => 'File harus berupa gambar !',
-            'foto.mimes'        => 'Format gambar yang di izinkan Jpeg, Jpg, Png',
-            'foto.max'          => 'Ukuran gambar maksimal 2MB !',
+            'gambar_struktur.required' => 'Wajib menambahkan gambar struktur organisasi!',
+            'gambar_struktur.image'    => 'File harus berupa gambar!',
+            'gambar_struktur.mimes'    => 'Format gambar yang diizinkan: JPEG, JPG, PNG',
+            'gambar_struktur.max'      => 'Ukuran gambar maksimal 5MB!',
         ]);
 
-        // CEK VALIDASI DULU SEBELUM UPLOAD
         if($validator->fails()){
-            return redirect('/admin/struktur-organisasi/create')
+            return redirect('/admin/struktur-organisasi')
                 ->withErrors($validator)
                 ->withInput();
         }
 
-        // BARU UPLOAD FILE SETELAH VALIDASI LOLOS
-        if($request->hasFile('foto')){
+        // Hapus gambar struktur lama jika ada
+        $gambarLama = StrukturOrganisasi::whereNotNull('gambar_struktur')->first();
+        if($gambarLama && $gambarLama->gambar_struktur && file_exists(public_path('storage/' . $gambarLama->gambar_struktur))){
+            unlink(public_path('storage/' . $gambarLama->gambar_struktur));
+            $gambarLama->update(['gambar_struktur' => null]);
+        }
+
+        if($request->hasFile('gambar_struktur')){
             $path       = 'img-struktur-organisasi/';
-            $file       = $request->file('foto');
+            $file       = $request->file('gambar_struktur');
             $extension  = $file->getClientOriginalExtension();
-            $fileName   = uniqid(). '.' . $extension;
+            $fileName   = 'struktur-' . time() . '.' . $extension;
             
-            // Pastikan direktori ada
             if (!file_exists(public_path('storage/' . $path))) {
                 mkdir(public_path('storage/' . $path), 0755, true);
             }
             
             $file->move(public_path('storage/' . $path), $fileName);
-            $foto       = $path . $fileName;
-        } else {
-            $foto       = null;
-        }
-
-        $strukturOrganisasi = StrukturOrganisasi::create([
-            'nama'      => $request->nama,
-            'jabatan'   => $request->jabatan,
-            'foto'      => $foto,
-            'user_id'   => Auth::id()
-        ]);
-
-        return redirect('/admin/struktur-organisasi')->with('success', 'Berhasil menambahkan data struktur organisasi');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(StrukturOrganisasi $strukturOrganisasi)
-    {
-        return view('admin.struktur-organisasi.edit', [
-            'strukturOrganisasi'     => $strukturOrganisasi,
-        ]);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, StrukturOrganisasi $strukturOrganisasi)
-    {
-        $validator = Validator::make($request->all(), [
-            'nama'      => 'required',
-            'jabatan'   => 'required',
-        ], [
-
-            'nama.required'     => 'Wajib menambahkan nama struktur organisasi !',
-            'jabatan.required'  => 'Wajib menambahkan jabatan struktur organisasi !',
-        ]);
-
-        if($request->hasFile('foto')){
-            // Hapus foto lama jika ada
-            if($strukturOrganisasi->foto && file_exists(public_path('storage/' . $strukturOrganisasi->foto))){
-                unlink(public_path('storage/' . $strukturOrganisasi->foto));
+            $gambarPath = $path . $fileName;
+            
+            // Simpan atau update gambar struktur
+            if($gambarLama) {
+                $gambarLama->update(['gambar_struktur' => $gambarPath]);
+            } else {
+                // Jika belum ada record, buat record untuk menyimpan gambar
+                StrukturOrganisasi::create([
+                    'gambar_struktur' => $gambarPath,
+                    'user_id'         => Auth::id()
+                ]);
             }
-            $path       = 'img-struktur-organisasi/';
-            $file       = $request->file('foto');
-            $extension  = $file->getClientOriginalExtension(); 
-            $fileName   = uniqid() . '.' . $extension;
-            $file->move(public_path('storage/' . $path), $fileName);
-            $foto       = $path . $fileName;
-        } else {
-            $validator = Validator::make($request->all(), [
-                'nama'      => 'required',
-                'jabatan'   => 'required',
-            ], [
-
-                'nama.required'     => 'Wajib menambahkan nama struktur organisasi !',
-                'jabatan.required'  => 'Wajib menambahkan jabatan struktur organisasi !',
-            ]);
-            $foto = $strukturOrganisasi->foto;
         }
 
-        if ($validator->fails()) {
-            return redirect("/admin/struktur-organisasi/{$strukturOrganisasi->id}/edit")
-                ->withErrors($validator)
-                ->withInput();
-        };
-
-        $strukturOrganisasi->update([
-            'nama'      => $request->nama,
-            'jabatan'   => $request->jabatan,
-            'foto'      => $foto,
-            'user_id'   => Auth::id()
-        ]);
-
-        return redirect('/admin/struktur-organisasi')->with('success', 'Berhasil memperbarui data struktur organisasi');
-
+        return redirect('/admin/struktur-organisasi')->with('success', 'Berhasil mengunggah gambar struktur organisasi');
     }
-
+    
     /**
-     * Remove the specified resource from storage.
+     * Hapus gambar struktur organisasi
      */
-    public function destroy(StrukturOrganisasi $strukturOrganisasi)
+    public function hapusGambarStruktur()
     {
-        // Cek apakah file foto ada sebelum menghapus
-        if($strukturOrganisasi->foto && file_exists(public_path('storage/' . $strukturOrganisasi->foto))){
-            unlink(public_path('storage/' . $strukturOrganisasi->foto));
+        $gambar = StrukturOrganisasi::whereNotNull('gambar_struktur')->first();
+        
+        if($gambar) {
+            if($gambar->gambar_struktur && file_exists(public_path('storage/' . $gambar->gambar_struktur))){
+                unlink(public_path('storage/' . $gambar->gambar_struktur));
+            }
+            
+            // Hapus record
+            $gambar->delete();
         }
 
-        $strukturOrganisasi->delete();
-
-        return redirect('/admin/struktur-organisasi')->with('success', 'Berhasil menghapus data struktur organisasi');
+        return redirect('/admin/struktur-organisasi')->with('success', 'Berhasil menghapus gambar struktur organisasi');
     }
 }

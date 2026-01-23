@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>@yield('title', 'Dashboard Admin') - Puskesmas</title>
+  <title>@yield('title', 'Dashboard Admin') - {{ $situs->nm_puskesmas ?? 'Puskesmas' }}</title>
   <!-- Favicons - Multiple sizes for better compatibility -->
   <link rel="icon" type="image/x-icon" href="/assets/img/favicon.ico?v=2">
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32x32.png?v=2">
@@ -13,24 +13,29 @@
   <link rel="manifest" href="/assets/img/site.webmanifest?v=2">
   <link rel="stylesheet" href="/admin/assets/css/styles.min.css" />
 
-  <!-- Jquery -->
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <!-- jQuery (Local) -->
+  <script src="/vendor/jquery/jquery-3.7.1.min.js"></script>
 
-  <!-- Datatable CSS -->
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <!-- Datatable CSS (Local) -->
+  <link rel="stylesheet" href="/vendor/datatables/css/dataTables.bootstrap5.min.css">
 
-  <!-- Bootstrap Icon-->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" 
-        integrity="sha384-4LISF5TTJX/fLmGSxO53rV4miRxdg84mZsxmO8Rx5jGtp/LbrixFETvWa5a6sESd" 
-        crossorigin="anonymous">
+  <!-- Bootstrap Icon (Local) -->
+  <link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
 
-  <!-- CKEditor 5 -->
-  <script src="https://cdn.ckeditor.com/ckeditor5/39.0.2/classic/ckeditor.js" crossorigin="anonymous"></script>
+  <!-- CKEditor 5 (Local) -->
+  <script src="/vendor/ckeditor5/ckeditor.js"></script>
 
   <!-- Appex -->
   <script src="/admin/assets/libs/apexcharts/dist/apexcharts.min.js"></script>
 
   @stack('styles')
+  <style>
+    /* Hide close (x) on admin alert messages to prevent showing the small x */
+    .alert .close,
+    .alert .btn-close {
+      display: none !important;
+    }
+  </style>
 </head>
 
 <body>
@@ -47,13 +52,15 @@
   </div>
   <script src="/admin/assets/libs/jquery/dist/jquery.min.js"></script>
   <script src="/admin/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- DataTables -->
-  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
+  <!-- DataTables (Local) -->
+  <script src="/vendor/datatables/js/jquery.dataTables.min.js"></script>
+  <script src="/vendor/datatables/js/dataTables.bootstrap5.min.js"></script>
   <script src="/admin/assets/js/sidebarmenu.js"></script>
   <script src="/admin/assets/js/app.min.js"></script>
   <script src="/admin/assets/libs/simplebar/dist/simplebar.js"></script>
   <script src="/admin/assets/js/dashboard.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" crossorigin="anonymous"></script>
+  <!-- Sweet Alert 2 (Local) -->
+  <script src="/vendor/sweetalert2/sweetalert2.all.min.js"></script>
   @include('sweetalert::alert')
   <script>
     $(".swal-confirm").click(function(e) {
@@ -73,7 +80,71 @@
         }
       })
     });
+    
+    // Handle delete-form class (for forms that submit to delete resources)
+    $(document).on('submit', '.delete-form', function(e) {
+      e.preventDefault();
+      var form = this; // Use native DOM element, not jQuery object
+
+      Swal.fire({
+        title: 'Hapus Data Ini?',
+        text: "Data ini akan dihapus permanen!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Ya, Hapus!',
+        cancelButtonText: 'Batal'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Use native submit to bypass all event listeners
+          HTMLFormElement.prototype.submit.call(form);
+        }
+      });
+    });
+
+    // Capture inline onsubmit confirms and replace with SweetAlert
+    $(document).ready(function() {
+      $('form[onsubmit*="confirm"]').each(function() {
+        var form = $(this);
+        form.removeAttr('onsubmit');
+        form.on('submit', function(e) {
+          e.preventDefault();
+          Swal.fire({
+            title: 'Hapus Data Ini?',
+            text: "Anda tidak akan dapat mengembalikan data yang dihapus!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              form.off('submit').submit();
+            }
+          });
+        });
+      });
+    });
   </script>
+  
+  <!-- CKEditor & SweetAlert Diagnostic -->
+  <script>
+    // Verify local libraries loaded
+    if (typeof ClassicEditor === 'undefined') {
+      console.error('❌ CKEditor gagal load dari lokal!');
+    } else {
+      console.log('✅ CKEditor loaded successfully (local)');
+    }
+    
+    if (typeof Swal === 'undefined') {
+      console.error('❌ SweetAlert2 gagal load dari lokal!');
+    } else {
+      console.log('✅ SweetAlert2 loaded successfully (local)');
+    }
+  </script>
+  
   @stack('scripts')
 </body>
 

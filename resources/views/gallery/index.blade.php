@@ -76,24 +76,31 @@
 
 <section class="counts section-bg">
     <div class="section-title">
-        <h2>Galeri Puskesmas</h2>
+        <h2>Album Galeri Puskesmas</h2>
     </div>
     <div class="container">
         <div class="row">
-            @foreach ($galerrys as $gallery)
+            @foreach ($albums as $album)
             <div class="col-lg-3 mb-4">
-                <a href="{{ route('galeri.show', $gallery->id) }}" style="text-decoration: none; color: inherit;">
-                    <picture>
-                        <img src="{{ asset('storage/' . $gallery->gambar) }}" class="img-fluid img-thumbnail"
-                            alt="Gallery" style="width: 100%; height: 200px; object-fit: cover;">
-                        <p class="mt-2 text-center fw-bold">{{ $gallery->keterangan }}</p>
-                    </picture>
+                <a href="{{ route('galeri.show', $album->id) }}" style="text-decoration: none; color: inherit;">
+                    <div class="position-relative">
+                        <img src="{{ asset('storage/' . $album->cover_image) }}" class="img-fluid img-thumbnail"
+                            alt="{{ $album->judul }}" style="width: 100%; height: 200px; object-fit: cover;">
+                        <div class="position-absolute bottom-0 start-0 w-100 p-2" 
+                             style="background: rgba(0,0,0,0.6); color: white;">
+                            <small><i class="bi bi-images"></i> {{ $album->images->count() }} foto</small>
+                        </div>
+                    </div>
+                    <p class="mt-2 text-center fw-bold">{{ $album->judul }}</p>
+                    @if($album->deskripsi)
+                        <p class="text-center text-muted small">{{ Str::limit($album->deskripsi, 60) }}</p>
+                    @endif
                 </a>
             </div>
             @endforeach
         </div>
         <div class="paginate my-3 text-center">
-            {{ $galerrys->links() }}
+            {{ $albums->links() }}
         </div>
     </div>
 </section>

@@ -6,6 +6,8 @@ use App\Models\Page;
 use App\Models\Menu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+use App\Helpers\HtmlSanitizer;
 
 class AdminPageController extends Controller
 {
@@ -50,6 +52,14 @@ class AdminPageController extends Controller
 
         $data = $request->except('banner');
         $data['is_active'] = $request->has('is_active') ? true : false;
+
+        // Sanitize HTML content from CKEditor to prevent XSS
+        if (isset($data['content'])) {
+            $data['content'] = HtmlSanitizer::sanitize($data['content']);
+            
+            // Hapus gambar lama yang tidak digunakan lagi
+            $this->cleanupUnusedImages($page->content, $data['content']);
+        }
 
         // Handle banner upload
         if ($request->hasFile('banner')) {
@@ -96,6 +106,16 @@ class AdminPageController extends Controller
         // Delete banner if exists
         if ($page->banner && Storage::disk('public')->exists($page->banner)) {
             Storage::disk('public')->delete($page->banner);
+        }
+
+        // Delete all content images used in this page
+        if ($page->content) {
+            $contentImages = $this->extractContentImages($page->content);
+            foreach ($contentImages as $imagePath) {
+                if (Storage::disk('public')->exists($imagePath)) {
+                    Storage::disk('public')->delete($imagePath);
+                }
+            }
         }
 
         $page->delete();
@@ -186,6 +206,67 @@ class AdminPageController extends Controller
             'success' => false,
             'message' => 'Banner tidak ditemukan!'
         ], 404);
+    }
+
+    /**
+     * Extract image paths from content HTML.
+     * 
+     * @param string $content
+     * @return array
+     */
+    private function extractContentImages($content)
+    {
+        if (!$content) {
+            return [];
+        }
+
+        $images = [];
+        
+        // Pattern untuk menangkap path gambar di storage/content-images
+        preg_match_all('/storage\/content-images\/([^\s"\'<>]+)/', $content, $matches);
+        
+        if (!empty($matches[0])) {
+            foreach ($matches[0] as $match) {
+                // Remove 'storage/' prefix karena Storage::disk('public') sudah mengarah ke storage/app/public
+                $imagePath = str_replace('storage/', '', $match);
+                $images[] = $imagePath;
+            }
+        }
+        
+        return array_unique($images);
+    }
+
+    /**
+     * Clean up unused images when content is updated.
+     * Compares old content with new content and deletes images that are no longer used.
+     * 
+     * @param string|null $oldContent
+     * @param string|null $newContent
+     * @return void
+     */
+    private function cleanupUnusedImages($oldContent, $newContent)
+    {
+        if (!$oldContent) {
+            return;
+        }
+
+        $oldImages = $this->extractContentImages($oldContent);
+        $newImages = $this->extractContentImages($newContent);
+        
+        // Find images that exist in old content but not in new content
+        $unusedImages = array_diff($oldImages, $newImages);
+        
+        // Delete unused images
+        foreach ($unusedImages as $imagePath) {
+            try {
+                if (Storage::disk('public')->exists($imagePath)) {
+                    Storage::disk('public')->delete($imagePath);
+                }
+            } catch (\Exception $e) {
+                // Log error but don't fail the update
+                Log::warning("Failed to delete unused image: {$imagePath}", ['error' => $e->getMessage()]);
+            }
+        }
     }
 }
 

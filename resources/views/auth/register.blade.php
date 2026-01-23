@@ -50,7 +50,7 @@
                         <button type="submit" class="btn btn-primary w-100 py-8 fs-4 mb-4 rounded-2">Daftar</button>
                         <div class="d-flex align-items-center justify-content-center">
                             <p class="fs-4 mb-0 fw-bold">Sudah punya akun ?</p>
-                            <a class="text-primary fw-bold ms-2" href="/login">Masuk</a>
+                            <a class="text-primary fw-bold ms-2" href="{{ route('login') }}">Masuk</a>
                         </div>
                     </form>
                 </div>

@@ -9,9 +9,15 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Cviebrock\EloquentSluggable\Services\SlugService;
+use App\Helpers\HtmlSanitizer;
 
 class AdminAnnouncementController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -53,7 +59,7 @@ class AdminAnnouncementController extends Controller
         Announcement::create([
             'judul'             => $request->judul,
             'slug'              => $request->slug,
-            'isi_pengumuman'    => $request->isi_pengumuman,
+            'isi_pengumuman'    => HtmlSanitizer::sanitize($request->isi_pengumuman),
             'excerpt'           => Str::limit(strip_tags($request->isi_pengumuman), 200),
             'user_id'           => auth()->user()->id
         ]);
@@ -105,7 +111,7 @@ class AdminAnnouncementController extends Controller
         $announcement->update([
             'judul'             => $request->judul,
             'slug'              => $request->slug,
-            'isi_pengumuman'    => $request->isi_pengumuman,
+            'isi_pengumuman'    => HtmlSanitizer::sanitize($request->isi_pengumuman),
             'excerpt'           => Str::limit(strip_tags($request->isi_pengumuman), 200),
             'user_id'           => auth()->user()->id
         ]);

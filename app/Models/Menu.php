@@ -74,30 +74,24 @@ class Menu extends Model
     }
 
     /**
-     * Scope a query to exclude static menus (Beranda, Kontak, and main menus).
+     * Scope a query to exclude static menus (Beranda and main static parent menus).
      */
     public function scopeExcludeStatic($query)
     {
         return $query->whereNotIn('slug', [
             'beranda', 
-            'kontak',
             'profil',
             'informasi',
-            'layanan-kesehatan',
-            // Submenu Profil
+            // Submenu Profil yang sudah ada
             'sambutan',
-            'profil-puskemas',
+            'profil-puskesmas',
             'visi-misi',
             'struktur-organisasi',
-            // Submenu Informasi
+            // Submenu Informasi yang sudah ada
             'berita',
             'pengumuman',
             'agenda',
-            'galeri',
-            'berkas',
-            // Submenu Layanan
-            'layanan',
-            'alur-pelayanan'
+            'galeri'
         ]);
     }
 
@@ -146,16 +140,35 @@ class Menu extends Model
      */
     public function getFullUrlAttribute()
     {
-        if ($this->type === 'external') {
-            return $this->url;
+        $url = $this->url;
+        
+        // If URL is empty, return it as is
+        if (empty($url)) {
+            return $url;
+        }
+        
+        // Check if it's an external URL (starts with http:// or https://)
+        if (preg_match('/^https?:\/\//i', $url)) {
+            return $url;
         }
 
         // For internal links, ensure URL starts with /
-        $url = $this->url;
-        if (!empty($url) && $url[0] !== '/') {
+        if ($url[0] !== '/') {
             $url = '/' . $url;
         }
 
         return $url;
+    }
+    
+    /**
+     * Check if menu URL is external link
+     */
+    public function isExternalLink()
+    {
+        if (empty($this->url)) {
+            return false;
+        }
+        
+        return preg_match('/^https?:\/\//i', $this->url);
     }
 }

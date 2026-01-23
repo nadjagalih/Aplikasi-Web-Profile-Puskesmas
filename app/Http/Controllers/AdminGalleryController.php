@@ -2,21 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Berita;
-use App\Models\Gallery;
+use App\Models\Album;
+use App\Models\AlbumImage;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class AdminGalleryController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         return view('admin.gallery.index', [
-            'gallerys'  => Gallery::all()
+            'albums'  => Album::with('images')->orderBy('id', 'DESC')->get()
         ]);
     }
 
@@ -34,37 +40,53 @@ class AdminGalleryController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'gambar'       => 'required|mimes:png,jpg,jpeg',
-            'keterangan'   => 'required'
+            'judul'         => 'required|max:255',
+            'deskripsi'     => 'nullable|max:1000',
+            'cover_image'   => 'required|image|mimes:png,jpg,jpeg|max:5120'
         ], [
-            'gambar.required'       => 'Form wajib di isi !',
-            'gambar.mimes'          => 'Format yang di izinkan png,jpg,jpeg !',
-            'keterangan.required'   => 'Form wajib di,'
+            'judul.required'         => 'Judul album wajib diisi!',
+            'judul.max'              => 'Judul maksimal 255 karakter!',
+            'deskripsi.max'          => 'Deskripsi maksimal 1000 karakter!',
+            'cover_image.required'   => 'Foto sampul wajib diisi!',
+            'cover_image.image'      => 'File harus berupa gambar!',
+            'cover_image.mimes'      => 'Format yang diizinkan png, jpg, jpeg!',
+            'cover_image.max'        => 'Ukuran file maksimal 5MB!'
         ]);
 
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
 
-        if ($request->hasFile('gambar')) {
-            $file       = $request->file('gambar');
+        // Upload cover image
+        $coverImage = null;
+        if ($request->hasFile('cover_image')) {
+            $file       = $request->file('cover_image');
             $extension  = $file->getClientOriginalExtension();
             $fileName   = uniqid() . '.' . $extension;
-            
-            // Simpan ke storage/app/public/img-gallery
-            $file->move(storage_path('app/public/img-gallery'), $fileName);
-            $gambar = 'img-gallery/' . $fileName;
-        } else {
-            $gambar     = null;
+            $file->move(storage_path('app/public/albums'), $fileName);
+            $coverImage = 'albums/' . $fileName;
         }
 
-        Gallery::create([
-            'gambar'       => $gambar,
-            'keterangan'   => $request->keterangan,
+        // Create album
+        $album = Album::create([
+            'judul'        => $request->judul,
+            'deskripsi'    => $request->deskripsi,
+            'cover_image'  => $coverImage,
             'user_id'      => auth()->user()->id,
         ]);
 
-        return redirect('/admin/gallery')->with('success', 'Berhasil menambahkan informasi layanan baru');
+        return redirect('/admin/gallery/' . $album->id)->with('success', 'Album berhasil dibuat! Silakan tambahkan foto ke album.');
+    }
+
+    /**
+     * Display the specified album detail.
+     */
+    public function show(string $id)
+    {
+        $album = Album::with('images')->findOrFail($id);
+        return view('admin.gallery.show', [
+            'album' => $album,
+        ]);
     }
 
     /**
@@ -72,9 +94,9 @@ class AdminGalleryController extends Controller
      */
     public function edit(string $id)
     {
-        $gallery = Gallery::find($id);
+        $album = Album::findOrFail($id);
         return view('admin.gallery.edit', [
-            'gallery'   => $gallery,
+            'album' => $album,
         ]);
     }
 
@@ -83,47 +105,90 @@ class AdminGalleryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $gallery = Gallery::find($id);
+        $album = Album::find($id);
+        
         $validator = Validator::make($request->all(), [
-            'keterangan'   => 'required'
+            'judul'         => 'required|max:255',
+            'deskripsi'     => 'nullable|max:1000',
+            'cover_image'   => 'nullable|image|mimes:png,jpg,jpeg|max:5120'
         ], [
-            'keterangan.required'   => 'Form wajib di,'
+            'judul.required'         => 'Judul album wajib diisi!',
+            'judul.max'              => 'Judul maksimal 255 karakter!',
+            'deskripsi.max'          => 'Deskripsi maksimal 1000 karakter!',
+            'cover_image.image'      => 'File harus berupa gambar!',
+            'cover_image.mimes'      => 'Format yang diizinkan png, jpg, jpeg!',
+            'cover_image.max'        => 'Ukuran file maksimal 5MB!'
         ]);
-
-        if ($request->hasFile('gambar')) {
-            // Hapus gambar lama
-            if ($gallery->gambar && file_exists(storage_path('app/public/' . $gallery->gambar))) {
-                unlink(storage_path('app/public/' . $gallery->gambar));
-            }
-            
-            $file       = $request->file('gambar');
-            $extension  = $file->getClientOriginalExtension();
-            $fileName   = uniqid() . '.' . $extension;
-            
-            // Simpan ke storage/app/public/img-gallery
-            $file->move(storage_path('app/public/img-gallery'), $fileName);
-            $gambar = 'img-gallery/' . $fileName;
-        } else {
-            $validator = Validator::make($request->all(), [
-                'gambar'       => 'mimes:png,jpg,jpeg',
-                'keterangan'   => 'required'
-            ], [
-                'gambar.mimes'          => 'Format yang di izinkan png,jpg,jpeg !',
-                'keterangan.required'   => 'Form wajib di,'
-            ]);
-            $gambar = $gallery->gambar;
-        }
 
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
 
-        $gallery->update([
-            'gambar'        => $gambar,
-            'keterangan'    => $request->keterangan
+        // Update cover image if new one uploaded
+        $coverImage = $album->cover_image;
+        if ($request->hasFile('cover_image')) {
+            // Delete old cover image with path validation
+            if ($album->cover_image) {
+                $oldPath = $album->cover_image;
+                if (strpos($oldPath, '..') === false && file_exists(storage_path('app/public/' . $oldPath))) {
+                    @unlink(storage_path('app/public/' . $oldPath));
+                }
+            }
+            
+            $file       = $request->file('cover_image');
+            $extension  = $file->getClientOriginalExtension();
+            $fileName   = uniqid() . '.' . $extension;
+            $file->move(storage_path('app/public/albums'), $fileName);
+            $coverImage = 'albums/' . $fileName;
+        }
+
+        // Update album
+        $album->update([
+            'judul'        => $request->judul,
+            'deskripsi'    => $request->deskripsi,
+            'cover_image'  => $coverImage
         ]);
 
-        return redirect('/admin/gallery')->with('success', 'Berhasil memperbarui data gallery');
+        return redirect('/admin/gallery/' . $album->id)->with('success', 'Berhasil memperbarui album');
+    }
+
+    /**
+     * Store images to album.
+     */
+    public function storeImages(Request $request, string $id)
+    {
+        $album = Album::findOrFail($id);
+        
+        $validator = Validator::make($request->all(), [
+            'images' => 'required|array',
+            'images.*' => 'required|image|mimes:png,jpg,jpeg|max:5120'
+        ], [
+            'images.required' => 'Pilih minimal satu gambar!',
+            'images.*.required' => 'File gambar wajib dipilih!',
+            'images.*.image'    => 'File harus berupa gambar!',
+            'images.*.mimes'    => 'Format gambar yang diizinkan: PNG, JPG, JPEG!',
+            'images.*.max'      => 'Ukuran file maksimal 5MB (5120KB)!'
+        ]);
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+
+        // Upload images
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $extension  = $image->getClientOriginalExtension();
+                $fileName   = uniqid() . '.' . $extension;
+                $image->move(storage_path('app/public/albums'), $fileName);
+                
+                AlbumImage::create([
+                    'album_id'   => $album->id,
+                    'gambar'     => 'albums/' . $fileName
+                ]);
+            }
+        }
+
+        return redirect('/admin/gallery/' . $album->id)->with('success', 'Berhasil menambahkan ' . count($request->file('images')) . ' foto ke album');
     }
 
     /**
@@ -131,15 +196,30 @@ class AdminGalleryController extends Controller
      */
     public function destroy(string $id)
     {
-        $gallery = Gallery::find($id);
+        $album = Album::with('images')->findOrFail($id);
         
-        // Hapus gambar dari storage
-        if ($gallery->gambar && file_exists(storage_path('app/public/' . $gallery->gambar))) {
-            unlink(storage_path('app/public/' . $gallery->gambar));
+        // Delete cover image with path validation
+        if ($album->cover_image) {
+            // Validate path to prevent directory traversal
+            $coverPath = $album->cover_image;
+            if (strpos($coverPath, '..') === false && file_exists(storage_path('app/public/' . $coverPath))) {
+                @unlink(storage_path('app/public/' . $coverPath));
+            }
         }
         
-        $gallery->delete();
+        // Delete all album images with path validation
+        foreach ($album->images as $image) {
+            if ($image->gambar) {
+                // Validate path to prevent directory traversal
+                $imagePath = $image->gambar;
+                if (strpos($imagePath, '..') === false && file_exists(storage_path('app/public/' . $imagePath))) {
+                    @unlink(storage_path('app/public/' . $imagePath));
+                }
+            }
+        }
+        
+        $album->delete();
 
-        return redirect()->back()->with('success', 'Berhasil menghapus data');
+        return redirect()->back()->with('success', 'Berhasil menghapus album');
     }
 }

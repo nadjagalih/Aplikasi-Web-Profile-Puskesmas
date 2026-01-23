@@ -50,13 +50,49 @@
     line-height: 1.8;
     word-wrap: break-word;
     overflow-wrap: break-word;
+    overflow-x: hidden;
 }
 
-.page-content img {
-    max-width: 100%;
-    height: auto;
+/* Force all images to be responsive */
+.page-content img,
+.page-content figure img,
+.page-content figure.image img,
+.page-content picture img,
+.page-content p img,
+.page-content div img {
+    max-width: 100% !important;
+    width: auto !important;
+    height: auto !important;
     border-radius: 8px;
-    margin: 20px 0;
+    margin: 20px auto;
+    display: block;
+    object-fit: contain;
+}
+
+/* Override inline styles from CKEditor */
+.page-content figure,
+.page-content figure.image,
+.page-content picture,
+.page-content p,
+.page-content div {
+    max-width: 100% !important;
+}
+
+.page-content figure.image {
+    display: block !important;
+    width: auto !important;
+    margin: 20px auto !important;
+}
+
+/* Remove any fixed width on figures */
+.page-content figure[style*="width"] {
+    width: auto !important;
+}
+
+/* Ensure container doesn't overflow */
+.page-content * {
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .page-content h2 {
@@ -174,6 +210,21 @@
     .page-content table td {
         padding: 10px;
         font-size: 13px;
+    }
+
+    /* Responsive images for mobile */
+    .page-content img {
+        max-width: 100% !important;
+        width: 100% !important;
+        height: auto !important;
+        margin: 15px 0 !important;
+    }
+
+    .page-content figure,
+    .page-content figure.image {
+        max-width: 100% !important;
+        width: 100% !important;
+        margin: 15px 0 !important;
     }
 }
 </style>

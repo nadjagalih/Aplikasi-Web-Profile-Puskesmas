@@ -65,10 +65,10 @@
                                             <td>
                                                 <a href="/berita/{{ $berita->slug }}" type="button" target="_blank" class="btn btn-success mb-1"><i class="ti ti-eye-check"></i></a>
                                                 <a href="/admin/berita/{{ $berita->id }}/edit" type="button" class="btn btn-warning mb-1"><i class="ti ti-edit"></i></a>
-                                                <form id="{{ $berita->id }}" action="/admin/berita/{{ $berita->id }}" method="POST" class="d-inline">
+                                                <form id="delete-form-{{ $berita->id }}" action="/admin/berita/{{ $berita->id }}" method="POST" class="d-inline">
                                                     @method('delete')
                                                     @csrf
-                                                    <button type="button" class="btn btn-danger swal-confirm mb-1" data-form="{{ $berita->id }}"><i class="ti ti-trash"></i></button>
+                                                    <button type="button" class="btn btn-danger swal-confirm mb-1" data-form="delete-form-{{ $berita->id }}"><i class="ti ti-trash"></i></button>
                                                 </form>
                                             </td>                                    
                                         </tr>
@@ -109,10 +109,10 @@
                                             </td>
                                             <td>
                                                 <a href="/admin/berita/{{ $berita->id }}/edit" type="button" class="btn btn-warning mb-1"><i class="ti ti-edit"></i></a>
-                                                <form id="{{ $berita->id }}" action="/admin/berita/{{ $berita->id }}" method="POST" class="d-inline">
+                                                <form id="delete-form-draft-{{ $berita->id }}" action="/admin/berita/{{ $berita->id }}" method="POST" class="d-inline">
                                                     @method('delete')
                                                     @csrf
-                                                    <button type="button" class="btn btn-danger swal-confirm mb-1" data-form="{{ $berita->id }}"><i class="ti ti-trash"></i></button>
+                                                    <button type="button" class="btn btn-danger swal-confirm mb-1" data-form="delete-form-draft-{{ $berita->id }}"><i class="ti ti-trash"></i></button>
                                                 </form>
                                             </td>                                    
                                         </tr>
@@ -130,7 +130,8 @@
 </div>
 
 <script>
-    $(document).ready( function () {
+    $(document).ready(function() {
+        // Initialize DataTables
         $('#table_id').DataTable();
         $('#table_draft').DataTable();
     });

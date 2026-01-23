@@ -1,7 +1,5 @@
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" crossorigin="anonymous">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" 
-      integrity="sha384-XGjxtQfXaH2tnPFa9x+ruJTuLE3Aa6LhHSWRr1XeTyhezb4abCG4ccI5AkVDxqC+" 
-      crossorigin="anonymous">
+<link href="/vendor/fonts/fonts.css" rel="stylesheet">
+<link href="/vendor/bootstrap-icons/bootstrap-icons.min.css" rel="stylesheet">
 
 <style>
     /* Base styles for desktop */
@@ -23,6 +21,13 @@
     #header .container {
         max-width: 1320px;
         margin: 0 auto;
+        position: relative;
+    }
+
+    /* Navbar wrapper */
+    #navbar {
+        position: relative;
+        max-width: 100%;
     }
 
     .logo img {
@@ -33,18 +38,24 @@
 
     #navbar ul {
         list-style: none;
+        display: flex;
+        margin: 0;
+        padding: 0;
+        flex-wrap: wrap;
+        gap: 5px 0;
     }
 
     #navbar ul li {
-        margin-left: 16px;
+        margin-left: 8px;
+        white-space: nowrap;
     }
 
     #navbar ul li a {
-        font-size: 16px;
+        font-size: 15px;
         font-weight: 600;
         color: #000;
         position: relative;
-        padding: 10px 12px;
+        padding: 10px 10px;
         text-decoration: none;
         transition: color 0.3s ease;
         display: inline-block;
@@ -86,7 +97,7 @@
         border-radius: 4px;
         padding: 8px 0;
         min-width: 240px;
-        z-index: 99;
+        z-index: 1000;
     }
 
     #navbar .dropdown:hover > ul {
@@ -188,6 +199,50 @@
         color: #0d6efd;
     }
 
+    /* Responsive untuk layar sedang dengan banyak menu (1200px - 1400px) */
+    @media (max-width: 1400px) {
+        #navbar ul li {
+            margin-left: 6px;
+        }
+
+        #navbar ul li a {
+            font-size: 14px;
+            padding: 10px 8px;
+        }
+
+        .login-btn,
+        .login-skm-btn {
+            font-size: 13px;
+            padding: 8px 12px;
+        }
+
+        .nav-arrow i {
+            font-size: 22px;
+        }
+    }
+
+    /* Responsive untuk layar medium dengan banyak menu */
+    @media (max-width: 1200px) {
+        #navbar ul li {
+            margin-left: 4px;
+        }
+
+        #navbar ul li a {
+            font-size: 13px;
+            padding: 10px 6px;
+        }
+
+        .login-btn,
+        .login-skm-btn {
+            font-size: 12px;
+            padding: 8px 10px;
+        }
+
+        .nav-arrow i {
+            font-size: 20px;
+        }
+    }
+
     /* Mobile & Tablet Responsive */
     @media (max-width: 991px) {
         #header {
@@ -228,6 +283,7 @@
             padding: 20px 0;
             transition: right 0.3s ease-in-out;
             z-index: 9999;
+            overflow-x: hidden !important;
             overflow-y: auto;
             align-items: flex-start;
             box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
@@ -293,6 +349,7 @@
             width: 100%;
             box-shadow: none;
             border-radius: 0;
+            z-index: 1;
         }
 
         #navbar .dropdown.dropdown-active > ul {
@@ -465,6 +522,26 @@
                                 Struktur Organisasi
                             </a>
                         </li>
+                        
+                        {{-- Custom Submenu untuk Profil --}}
+                        @foreach(get_custom_submenu('profil') as $customMenu)
+                            @php
+                                $customUrl = ltrim($customMenu->full_url, '/');
+                                $customActive = ($currentPath === $customUrl || Request::is($customUrl)) ? 'active' : '';
+                                $isCustomExternal = $customMenu->isExternalLink();
+                                $customHref = $isCustomExternal ? $customMenu->url : url($customMenu->full_url);
+                            @endphp
+                            <li>
+                                <a href="{{ $customHref }}" 
+                                   class="{{ $customActive }}"
+                                   target="{{ $customMenu->target }}">
+                                    @if($customMenu->icon)
+                                        <i class="{{ $customMenu->icon }}"></i>
+                                    @endif
+                                    {{ $customMenu->title }}
+                                </a>
+                            </li>
+                        @endforeach
                     </ul>
                 </li>
 
@@ -497,6 +574,26 @@
                                 Berkas
                             </a>
                         </li>
+                        
+                        {{-- Custom Submenu untuk Informasi --}}
+                        @foreach(get_custom_submenu('informasi') as $customMenu)
+                            @php
+                                $customUrl = ltrim($customMenu->full_url, '/');
+                                $customActive = ($currentPath === $customUrl || Request::is($customUrl)) ? 'active' : '';
+                                $isCustomExternal = $customMenu->isExternalLink();
+                                $customHref = $isCustomExternal ? $customMenu->url : url($customMenu->full_url);
+                            @endphp
+                            <li>
+                                <a href="{{ $customHref }}" 
+                                   class="{{ $customActive }}"
+                                   target="{{ $customMenu->target }}">
+                                    @if($customMenu->icon)
+                                        <i class="{{ $customMenu->icon }}"></i>
+                                    @endif
+                                    {{ $customMenu->title }}
+                                </a>
+                            </li>
+                        @endforeach
                     </ul>
                 </li>
 
@@ -540,8 +637,8 @@
                                     @php
                                         $childUrl = ltrim($child->full_url, '/');
                                         $childActive = ($currentPath === $childUrl || Request::is($childUrl)) ? 'active' : '';
-                                        // Check if external link (starts with http:// or https://)
-                                        $isExternal = preg_match('/^https?:\/\//', $child->url);
+                                        // Use model method to check if external
+                                        $isExternal = $child->isExternalLink();
                                         $childHref = $isExternal ? $child->url : url($child->full_url);
                                     @endphp
                                     <li>
@@ -560,8 +657,8 @@
                     @else
                         {{-- Single Menu Item --}}
                         @php
-                            // Check if external link
-                            $isMenuExternal = preg_match('/^https?:\/\//', $menu->url);
+                            // Use model method to check if external
+                            $isMenuExternal = $menu->isExternalLink();
                             $menuHref = $isMenuExternal ? $menu->url : url($menu->full_url);
                         @endphp
                         <li>
@@ -578,14 +675,6 @@
                         </li>
                     @endif
                 @endforeach
-
-                {{-- Menu Statis Kontak --}}
-                <li>
-                    <a class="nav-link scrollto {{ $currentPath === 'kontak' ? 'active' : '' }}" 
-                       href="/kontak">
-                        <span>Kontak</span>
-                    </a>
-                </li>
 
                 <!-- Desktop Login SKM Button -->
                 @php

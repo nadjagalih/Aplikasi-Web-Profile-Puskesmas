@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 
 class AdminBerkasController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function index()
     {
         $berkas = Berkas::orderBy('created_at', 'desc')->get();

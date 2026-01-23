@@ -8,6 +8,11 @@ use Illuminate\Support\Facades\Validator;
 
 class AdminSkmConfigController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Display and edit the configuration.
      */

@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Validator;
 
 class AdminIdentitasSitusController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function index()
     {
         return view('admin.identitas-situs.index', [

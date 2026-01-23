@@ -45,13 +45,13 @@
                                                     class="btn btn-success mb-1"><i class="ti ti-eye-check"></i></a>
                                                 <a href="/admin/pengumuman/{{ $pengumuman->id }}/edit" type="button"
                                                     class="btn btn-warning mb-1"><i class="ti ti-edit"></i></a>
-                                                <form id="{{ $pengumuman->id }}"
+                                                <form id="delete-form-{{ $pengumuman->id }}"
                                                     action="/admin/pengumuman/{{ $pengumuman->id }}" method="POST"
                                                     class="d-inline">
                                                     @method('delete')
                                                     @csrf
                                                     <button type="button" class="btn btn-danger swal-confirm mb-1"
-                                                        data-form="{{ $pengumuman->id }}"><i
+                                                        data-form="delete-form-{{ $pengumuman->id }}"><i
                                                             class="ti ti-trash"></i></button>
                                                 </form>
                                             </td>

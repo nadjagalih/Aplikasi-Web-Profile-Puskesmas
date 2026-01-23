@@ -2,23 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Gallery;
+use App\Models\Album;
+use App\Models\AlbumImage;
 use Illuminate\Http\Request;
 
 class GalleryController extends Controller
 {
-    // Halaman daftar galeri
+    // Halaman daftar album
     public function index()
     {
         return view('gallery.index', [
-            'galerrys'  => Gallery::orderBy('id', 'DESC')->paginate(12)
+            'albums'  => Album::orderBy('id', 'DESC')->paginate(12)
         ]);
     }
 
-    // Halaman detail galeri
+    // Halaman detail album dengan semua gambar
     public function show($id)
     {
-        $gallery = Gallery::findOrFail($id);
-        return view('gallery.detail', compact('gallery'));
+        $album = Album::with('images')->findOrFail($id);
+        return view('gallery.detail', compact('album'));
     }
 }

@@ -95,8 +95,7 @@
     </div>
 </div>
 
-<!-- CKEditor 5 -->
-<script src="https://cdn.ckeditor.com/ckeditor5/39.0.0/classic/ckeditor.js"></script>
+<!-- CKEditor 5 Script sudah di-load dari main.blade.php (versi 39.0.2) -->
 <script>
     // Simple Upload Adapter untuk handle upload gambar
     class MyUploadAdapter {

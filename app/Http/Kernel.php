@@ -23,6 +23,7 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \App\Http\Middleware\ForceHttps::class,
         \App\Http\Middleware\SetSecurityHeaders::class,
+        \App\Http\Middleware\NormalizeRequestAndNoCache::class,
     ];
 
     /**
@@ -39,6 +40,8 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\LogoSite::class,
+            \App\Http\Middleware\SanitizeInput::class,
+            \App\Http\Middleware\ValidateRedirect::class,
         ],
 
         'api' => [

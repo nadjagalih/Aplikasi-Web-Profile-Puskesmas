@@ -20,135 +20,118 @@
           {{ session('success') }}
         </div>
         @endif
-
-        <div class="row">
-          <div class="button mb-3">
-            <a href="/admin/struktur-organisasi/create" type="button" class="btn btn-success">Tambah Pegawai</a>
-          </div>
-
-          @php
-            // Pisahkan kepala puskesmas dari yang lain
-            $kepalaPuskesmas = $strukturOrganisasi->filter(function($item) {
-              return stripos($item->jabatan, 'kepala puskesmas') !== false;
-            })->first();
-            
-            $staffLainnya = $strukturOrganisasi->filter(function($item) {
-              return stripos($item->jabatan, 'kepala puskesmas') === false;
-            })->sortBy('jabatan');
-          @endphp
-
-          {{-- Tabel Kepala Puskesmas --}}
-          @if($kepalaPuskesmas)
-          <div class="col-12 mb-4">
-            <h5 class="mb-3">Kepala Puskesmas</h5>
-            <div class="table-responsive">
-              <table class="table table-bordered table-hover">
-                <thead class="table-primary">
-                  <tr>
-                    <th width="80" class="text-center">Foto</th>
-                    <th>Nama</th>
-                    <th>Jabatan</th>
-                    <th width="200" class="text-center">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="text-center align-middle">
-                      <img src="{{ asset('storage/' . $kepalaPuskesmas->foto) }}" 
-                           class="img-thumbnail" 
-                           alt="{{ $kepalaPuskesmas->nama }}" 
-                           style="width: 60px; height: 60px; object-fit: cover;">
-                    </td>
-                    <td class="align-middle">
-                      <strong>{{ $kepalaPuskesmas->nama }}</strong>
-                    </td>
-                    <td class="align-middle">
-                      <span class="badge bg-primary">{{ $kepalaPuskesmas->jabatan }}</span>
-                    </td>
-                    <td class="text-center align-middle">
-                      <a href="/admin/struktur-organisasi/{{ $kepalaPuskesmas->id }}/edit" 
-                         class="btn btn-sm btn-warning">
-                        <i class="ti ti-edit"></i> Edit
-                      </a>
-                      <form id="{{ $kepalaPuskesmas->id }}" 
-                            action="/admin/struktur-organisasi/{{ $kepalaPuskesmas->id }}" 
-                            method="POST" 
-                            class="d-inline">
-                        @method('delete')
-                        @csrf
-                        <button type="button" 
-                                class="btn btn-sm btn-danger swal-confirm" 
-                                data-form="{{ $kepalaPuskesmas->id }}">
-                          <i class="ti ti-trash"></i> Hapus
-                        </button>
-                      </form>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          @endif
-
-          {{-- Tabel Staff Lainnya --}}
-          @if($staffLainnya->count() > 0)
-          <div class="col-12">
-            <h5 class="mb-3">Staff & Pegawai</h5>
-            <div class="table-responsive">
-              <table class="table table-bordered table-hover">
-                <thead class="table-secondary">
-                  <tr>
-                    <th width="50" class="text-center">No</th>
-                    <th width="80" class="text-center">Foto</th>
-                    <th>Nama</th>
-                    <th>Jabatan</th>
-                    <th width="200" class="text-center">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @foreach ($staffLainnya as $index => $perangkat)
-                  <tr>
-                    <td class="text-center align-middle">{{ $index + 1 }}</td>
-                    <td class="text-center align-middle">
-                      <img src="{{ asset('storage/' . $perangkat->foto) }}" 
-                           class="img-thumbnail" 
-                           alt="{{ $perangkat->nama }}" 
-                           style="width: 60px; height: 60px; object-fit: cover;">
-                    </td>
-                    <td class="align-middle">{{ $perangkat->nama }}</td>
-                    <td class="align-middle">{{ $perangkat->jabatan }}</td>
-                    <td class="text-center align-middle">
-                      <a href="/admin/struktur-organisasi/{{ $perangkat->id }}/edit" 
-                         class="btn btn-sm btn-warning">
-                        <i class="ti ti-edit"></i> Edit
-                      </a>
-                      <form id="{{ $perangkat->id }}" 
-                            action="/admin/struktur-organisasi/{{ $perangkat->id }}" 
-                            method="POST" 
-                            class="d-inline">
-                        @method('delete')
-                        @csrf
-                        <button type="button" 
-                                class="btn btn-sm btn-danger swal-confirm" 
-                                data-form="{{ $perangkat->id }}">
-                          <i class="ti ti-trash"></i> Hapus
-                        </button>
-                      </form>
-                    </td>
-                  </tr>
-                  @endforeach
-                </tbody>
-              </table>
-            </div>
-          </div>
-          @endif
-
+        
+        @if (session()->has('errors'))
+        <div class="alert alert-danger">
+          <ul class="mb-0">
+            @foreach (session('errors')->all() as $error)
+              <li>{{ $error }}</li>
+            @endforeach
+          </ul>
         </div>
+        @endif
+
+        {{-- Section Upload Gambar Struktur Organisasi --}}
+        @if($gambarStruktur && $gambarStruktur->gambar_struktur)
+          {{-- Tampilan jika sudah ada gambar --}}
+          <div class="mb-3">
+            <h6 class="mb-3 fw-semibold text-primary">
+              <i class="ti ti-photo"></i> Gambar Struktur Organisasi
+            </h6>
+          </div>
+          
+          <div class="alert alert-info mb-4">
+            <i class="ti ti-info-circle"></i> 
+            Gambar struktur organisasi saat ini akan ditampilkan di halaman publik
+          </div>
+          
+          <div class="text-center mb-4">
+            <img src="{{ asset('storage/' . $gambarStruktur->gambar_struktur) }}" 
+                 class="img-fluid rounded border shadow-sm" 
+                 alt="Struktur Organisasi"
+                 style="max-width: 100%; max-height: 600px; object-fit: contain;">
+          </div>
+          
+          <div class="text-center">
+            <form action="{{ route('admin.struktur-organisasi.hapus-gambar') }}" 
+                  method="POST" 
+                  id="delete-gambar-form"
+                  class="d-inline">
+              @csrf
+              @method('DELETE')
+              <button type="button" 
+                      class="btn btn-danger swal-confirm" 
+                      data-form="delete-gambar-form">
+                <i class="ti ti-trash"></i> Hapus Gambar
+              </button>
+            </form>
+          </div>
+        @else
+          {{-- Form Upload jika belum ada gambar --}}
+          <div class="mb-3">
+            <h6 class="mb-3 fw-semibold text-primary">
+              <i class="ti ti-photo"></i> Upload Gambar Struktur Organisasi
+            </h6>
+          </div>
+          
+          <form action="{{ route('admin.struktur-organisasi.upload-gambar') }}" 
+                method="POST" 
+                enctype="multipart/form-data">
+            @csrf
+            <div class="row">
+              <div class="col-12 mb-3">
+                <label class="form-label fw-semibold">
+                  Pilih Gambar Struktur Organisasi
+                  <span class="text-danger">*</span>
+                </label>
+                <input type="file" 
+                       class="form-control" 
+                       name="gambar_struktur" 
+                       id="gambar_struktur"
+                       accept="image/*"
+                       onchange="previewImage(event)"
+                       required>
+                <small class="text-muted">
+                  Format: JPG, JPEG, PNG | Maksimal: 5MB
+                </small>
+              </div>
+              <div class="col-12 mb-3 text-center">
+                <img id="preview-gambar" 
+                     class="img-fluid rounded border d-none" 
+                     style="max-width: 100%; max-height: 400px; object-fit: contain;">
+              </div>
+              <div class="col-12 text-center">
+                <button type="submit" class="btn btn-primary btn-lg">
+                  <i class="ti ti-upload"></i> Upload Gambar
+                </button>
+              </div>
+            </div>
+          </form>
+        @endif
 
       </div>
-
     </div>
   </div>
 </div>
 
 @endsection
+
+@push('scripts')
+<script>
+  function previewImage(event) {
+    const input = event.target;
+    const preview = document.getElementById('preview-gambar');
+    
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      
+      reader.onload = function(e) {
+        preview.src = e.target.result;
+        preview.classList.remove('d-none');
+      }
+      
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+</script>
+@endpush

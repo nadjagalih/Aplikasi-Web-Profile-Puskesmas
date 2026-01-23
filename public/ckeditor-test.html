@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CKEditor Test</title>
+    
+    <!-- CKEditor 5 -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.2/classic/ckeditor.js" 
+            crossorigin="anonymous"></script>
+</head>
+<body>
+    <h1>CKEditor Test Page</h1>
+    <textarea id="editor">
+        <p>Hello from CKEditor 5!</p>
+    </textarea>
+
+    <script>
+        console.log('Testing CKEditor...');
+        console.log('ClassicEditor available:', typeof ClassicEditor !== 'undefined');
+        
+        if (typeof ClassicEditor !== 'undefined') {
+            ClassicEditor
+                .create(document.querySelector('#editor'))
+                .then(editor => {
+                    console.log('CKEditor initialized successfully!', editor);
+                })
+                .catch(error => {
+                    console.error('CKEditor initialization error:', error);
+                });
+        } else {
+            console.error('ClassicEditor is not defined! CKEditor script failed to load.');
+        }
+    </script>
+</body>
+</html>

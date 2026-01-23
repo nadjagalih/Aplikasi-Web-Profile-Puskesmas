@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dashboard Admin - Kecamatan Panggul</title>
+  <title>Dashboard Admin - {{ $situs->nm_puskesmas ?? 'Puskesmas' }}</title>
   <!-- Favicons - Multiple sizes for better compatibility -->
   <link rel="icon" type="image/x-icon" href="/assets/img/favicon.ico?v=2">
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32x32.png?v=2">
@@ -13,23 +13,29 @@
   <link rel="manifest" href="/assets/img/site.webmanifest?v=2">
   <link rel="stylesheet" href="/admin/assets/css/styles.min.css" />
 
-  <!-- Jquery -->
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <!-- jQuery (Local) -->
+  <script src="/vendor/jquery/jquery-3.7.1.min.js"></script>
 
-  <!-- Datatable CSS -->
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <!-- Datatable CSS (Local) -->
+  <link rel="stylesheet" href="/vendor/datatables/css/dataTables.bootstrap5.min.css">
 
-  <!-- Bootstrap Icon-->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" 
-        integrity="sha384-4LISF5TTJX/fLmGSxO53rV4miRxdg84mZsxmO8Rx5jGtp/LbrixFETvWa5a6sESd" 
-        crossorigin="anonymous">
+  <!-- Bootstrap Icon (Local) -->
+  <link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
 
-  <!-- CKEditor 5 -->
-  <script src="https://cdn.ckeditor.com/ckeditor5/39.0.2/classic/ckeditor.js" crossorigin="anonymous"></script>
+  <!-- CKEditor 5 (Local) -->
+  <script src="/vendor/ckeditor5/ckeditor.js"></script>
 
   <!-- Appex -->
   <script src="/admin/assets/libs/apexcharts/dist/apexcharts.min.js"></script>
 </head>
+
+  <style>
+    /* Hide close (x) on admin alert messages to prevent showing the small x */
+    .alert .close,
+    .alert .btn-close {
+      display: none !important;
+    }
+  </style>
 
 <body>
   <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
@@ -45,15 +51,16 @@
   </div>
   <script src="/admin/assets/libs/jquery/dist/jquery.min.js"></script>
   <script src="/admin/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- DataTables -->
-  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
+  <!-- DataTables (Local) -->
+  <script src="/vendor/datatables/js/jquery.dataTables.min.js"></script>
+  <script src="/vendor/datatables/js/dataTables.bootstrap5.min.js"></script>
   <script src="/admin/assets/js/sidebarmenu.js"></script>
   <script src="/admin/assets/js/app.min.js"></script>
   <script src="/admin/assets/libs/simplebar/dist/simplebar.js"></script>
   <script src="/admin/assets/js/dashboard.js"></script>
   
-  <!-- Sweet Alert 2 -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" crossorigin="anonymous"></script>
+  <!-- Sweet Alert 2 (Local) -->
+  <script src="/vendor/sweetalert2/sweetalert2.all.min.js"></script>
   @include('sweetalert::alert')
   
   <script>
@@ -89,7 +96,7 @@
       // Handle delete-form class (for menu.blade.php and others)
       $(document).on('submit', '.delete-form', function(e) {
         e.preventDefault();
-        var form = $(this);
+        var form = this; // Use native DOM element, not jQuery object
         
         Swal.fire({
           title: 'Hapus Data Ini?',
@@ -102,8 +109,8 @@
           cancelButtonText: 'Batal'
         }).then((result) => {
           if (result.isConfirmed) {
-            // Remove event handler to prevent infinite loop, then submit
-            form.off('submit').submit();
+            // Use native submit to bypass all event listeners
+            HTMLFormElement.prototype.submit.call(form);
           }
         });
       });
@@ -137,6 +144,12 @@
         });
       });
     });
+  </script>
+  
+  <!-- CKEditor & SweetAlert loaded from local files -->
+  <script>
+    console.log('CKEditor loaded:', typeof ClassicEditor !== 'undefined');
+    console.log('SweetAlert loaded:', typeof Swal !== 'undefined');
   </script>
   
   @stack('scripts')

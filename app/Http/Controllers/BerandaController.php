@@ -7,7 +7,7 @@ use App\Models\Berita;
 use App\Models\Sambutan;
 use App\Models\Layanan;
 use App\Models\Agenda;
-use App\Models\Gallery;
+use App\Models\Album;
 use App\Models\SkmConfig;
 use Illuminate\Support\Facades\Http;
 
@@ -62,7 +62,7 @@ class BerandaController extends Controller
             'skm'         => $skm,
             'layanans'    => Layanan::latest()->get(),
             'agendas'     => Agenda::where('status', 'Aktif')->latest()->take(3)->get(),
-            'galleries'   => Gallery::latest()->take(9)->get() // Ambil 9 untuk 3 slide (3x3)
+            'galleries'   => Album::with('images')->latest()->take(9)->get() // Ambil 9 album terbaru dengan images
         ]);
     }
 }

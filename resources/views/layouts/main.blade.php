@@ -16,8 +16,8 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png?v=2">
   <link rel="manifest" href="/assets/img/site.webmanifest?v=2">
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,600,600i,700,700i,900" rel="stylesheet" crossorigin="anonymous">
+  <!-- Google Fonts (Local) -->
+  <link href="/vendor/fonts/fonts.css" rel="stylesheet">
 
   <!-- Vendor CSS Files -->
   <link href="/assets/vendor/animate.css/animate.min.css" rel="stylesheet">
@@ -31,8 +31,48 @@
   <!-- Template Main CSS File -->
   <link href="/assets/css/style.css" rel="stylesheet">
 
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js" crossorigin="anonymous"></script>
+  <!-- Chart.js (Local) -->
+  <script src="/vendor/chartjs/chart.umd.min.js"></script>
+  
+  <!-- Global Responsive Images CSS -->
+  <style>
+    /* Ensure all images are responsive globally */
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+    
+    /* Specific for content areas */
+    .content img,
+    .page-content img,
+    main img,
+    article img,
+    section img {
+      max-width: 100% !important;
+      height: auto !important;
+      width: auto !important;
+      display: block;
+    }
+    
+    /* Prevent content overflow */
+    .container img,
+    .row img,
+    .col img {
+      max-width: 100% !important;
+      height: auto !important;
+    }
+    
+    /* Override any inline styles */
+    img[style*="width"] {
+      width: auto !important;
+      max-width: 100% !important;
+    }
+    
+    img[width] {
+      width: auto !important;
+      max-width: 100% !important;
+    }
+  </style>
 </head>
 
 <body>
@@ -61,8 +101,8 @@
   <!-- Template Main JS File -->
   <script src="/assets/js/main.js"></script>
 
-  <!-- Sweet Alert 2 -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" crossorigin="anonymous"></script>
+  <!-- Sweet Alert 2 (Local) -->
+  <script src="/vendor/sweetalert2/sweetalert2.all.min.js"></script>
   @include('sweetalert::alert')
   
   <script>

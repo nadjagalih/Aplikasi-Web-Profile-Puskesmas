@@ -41,10 +41,10 @@
                                     <td>{{ $kategori->user->name }}</td>
                                     <td>
                                         <a href="/admin/kategori/{{ $kategori->id }}/edit" type="button" class="btn btn-warning mb-1"><i class="ti ti-edit"></i></a>
-                                        <form id="{{ $kategori->id }}" action="/admin/kategori/{{ $kategori->id }}" method="POST" class="d-inline">
+                                        <form id="delete-form-{{ $kategori->id }}" action="/admin/kategori/{{ $kategori->id }}" method="POST" class="d-inline">
                                             @method('delete')
                                             @csrf
-                                            <button type="button" class="btn btn-danger swal-confirm mb-1" data-form="{{ $kategori->id }}"><i class="ti ti-trash"></i></button>
+                                            <button type="button" class="btn btn-danger swal-confirm mb-1" data-form="delete-form-{{ $kategori->id }}"><i class="ti ti-trash"></i></button>
                                         </form>
                                     </td>
                                 </tr>

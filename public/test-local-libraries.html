@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Libraries Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .status {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 2px solid #bee5eb;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px 5px;
+            cursor: pointer;
+        }
+        #editor {
+            margin: 20px 0;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Local Libraries (SweetAlert2 & CKEditor)</h1>
+    
+    <div id="status-container"></div>
+    
+    <h2>Test 1: SweetAlert2</h2>
+    <button onclick="testSweetAlert()">Test SweetAlert</button>
+    
+    <h2>Test 2: CKEditor</h2>
+    <textarea id="editor">
+        <h2>Hello from CKEditor!</h2>
+        <p>This is a <strong>test</strong> content loaded from <em>local file</em>.</p>
+    </textarea>
+
+    <!-- Load libraries from LOCAL files -->
+    <script src="/vendor/sweetalert2/sweetalert2.all.min.js"></script>
+    <script src="/vendor/ckeditor5/ckeditor.js"></script>
+
+    <script>
+        const statusContainer = document.getElementById('status-container');
+        
+        function addStatus(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.innerHTML = message;
+            statusContainer.appendChild(div);
+            console.log(`[${type}] ${message}`);
+        }
+
+        // Test 1: Check SweetAlert2
+        addStatus('🔍 Checking SweetAlert2...', 'info');
+        if (typeof Swal !== 'undefined') {
+            addStatus('✅ <strong>SweetAlert2</strong> loaded successfully from LOCAL file!', 'success');
+            addStatus(`📦 Version: ${Swal.version || 'Unknown'}`, 'info');
+        } else {
+            addStatus('❌ <strong>SweetAlert2</strong> FAILED to load!', 'error');
+        }
+
+        // Test 2: Check CKEditor
+        addStatus('🔍 Checking CKEditor...', 'info');
+        if (typeof ClassicEditor !== 'undefined') {
+            addStatus('✅ <strong>CKEditor</strong> loaded successfully from LOCAL file!', 'success');
+            addStatus(`📦 Version: ${ClassicEditor.version || 'Unknown'}`, 'info');
+            
+            // Initialize CKEditor
+            ClassicEditor
+                .create(document.querySelector('#editor'), {
+                    toolbar: [
+                        'heading', '|',
+                        'bold', 'italic', 'link', '|',
+                        'bulletedList', 'numberedList', '|',
+                        'blockQuote', 'insertTable', '|',
+                        'undo', 'redo'
+                    ]
+                })
+                .then(editor => {
+                    addStatus('✅ <strong>CKEditor initialized</strong> successfully!', 'success');
+                    console.log('CKEditor instance:', editor);
+                })
+                .catch(error => {
+                    addStatus(`❌ CKEditor initialization error: ${error.message}`, 'error');
+                    console.error(error);
+                });
+        } else {
+            addStatus('❌ <strong>CKEditor</strong> FAILED to load!', 'error');
+        }
+
+        // Test 3: File paths
+        addStatus('📁 Library paths:', 'info');
+        addStatus('&nbsp;&nbsp;• SweetAlert2: <code>/vendor/sweetalert2/sweetalert2.all.min.js</code>', 'info');
+        addStatus('&nbsp;&nbsp;• CKEditor: <code>/vendor/ckeditor5/ckeditor.js</code>', 'info');
+
+        // Function to test SweetAlert
+        function testSweetAlert() {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: 'Test Berhasil! 🎉',
+                    html: '<p><strong>SweetAlert2</strong> berjalan dari file lokal!</p><p>Tidak lagi menggunakan CDN.</p>',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                });
+            } else {
+                alert('SweetAlert2 not loaded!');
+            }
+        }
+
+        // Summary
+        setTimeout(() => {
+            const bothLoaded = (typeof Swal !== 'undefined') && (typeof ClassicEditor !== 'undefined');
+            if (bothLoaded) {
+                addStatus('🎉 <strong>SEMUA LIBRARY BERHASIL DIMUAT DARI FILE LOKAL!</strong>', 'success');
+            } else {
+                addStatus('⚠️ Ada library yang gagal dimuat. Periksa console untuk detail.', 'error');
+            }
+        }, 500);
+    </script>
+</body>
+</html>
