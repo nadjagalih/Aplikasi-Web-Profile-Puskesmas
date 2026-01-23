@@ -1433,10 +1433,10 @@
     
     const descEl = document.getElementById('fasilitasDesc');
     if (descEl) {
-      // Use textContent instead of innerHTML to prevent XSS
+      // Decode HTML entities and render as HTML from CKEditor
       const textarea = document.createElement('textarea');
       textarea.innerHTML = desc;
-      descEl.textContent = textarea.value;
+      descEl.innerHTML = textarea.value;
     }
     
     // Update biaya
@@ -1455,8 +1455,8 @@
     if (persyaratanEl && persyaratan) {
       const textarea2 = document.createElement('textarea');
       textarea2.innerHTML = persyaratan;
-      // Use textContent instead of innerHTML to prevent XSS
-      persyaratanEl.textContent = textarea2.value;
+      // Decode HTML entities and render as HTML from CKEditor
+      persyaratanEl.innerHTML = textarea2.value;
       if (persyaratanContainer) persyaratanContainer.style.display = 'block';
     } else if (persyaratanContainer) {
       persyaratanContainer.style.display = 'none';
