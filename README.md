@@ -53,9 +53,8 @@ npm run build
    - Data Kunjungan Pasien
    - Grafik & Statistik Kesehatan
    
-6. **Kontak & Pengaduan**
+6. **Kontak**
    - Informasi Kontak
-   - Form Pengaduan Online
    - Lokasi Maps
 
 
