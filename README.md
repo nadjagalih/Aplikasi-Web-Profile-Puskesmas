@@ -104,5 +104,5 @@ Akses Aplikasi di Web browser
 
 Demo Login :
 1. Admin
-    - email     : admin@gmail.com
-    - password  : rahasia123
+    - username  : administrator
+    - password  : password
