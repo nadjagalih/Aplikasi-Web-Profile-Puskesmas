@@ -75,11 +75,10 @@ Lakukan Clone Project/Unduh manual .
 
 Aktifkan Xampp Control Panel, lalu akses ke http://localhost/phpmyadmin/.
 
-Buat database dengan nama 'DESA-LARAVEL' atau gunakan database yang sudah ada.
+Buat database dengan nama 'pkm-laravel' atau gunakan database yang sudah ada.
 
 Jika melakukan Clone Project, rename file .env.example dengan env dan hubungkan
-database nya dengan mengisikan nama database, 'DB_DATABASE=DESA-LARAVEL'.
-
+database nya dengan mengisikan nama database, 'DB_DATABASE=pkm-laravel'.
 
 Kemudian, Ketik pada terminal :
 ```sh
