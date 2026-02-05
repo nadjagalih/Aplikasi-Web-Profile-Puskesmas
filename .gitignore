@@ -39,5 +39,5 @@ Thumbs.db
 # sh file
 *.sh
 
-*.pem
-*.verify_secority.php
+*key.pem
+*.verify_security.php
